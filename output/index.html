@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirection...</title>
+    <script>
+        var lang = (navigator.language || navigator.userLanguage).split('-')[0];
+        if (lang === 'en') {
+            window.location.replace("en/");
+        } else if (lang === 'de') {
+            window.location.replace("de/");
+        } else if (lang === 'es') {
+            window.location.replace("es/");
+        } else if (lang === 'it') {
+            window.location.replace("it/");
+        } else if (lang === 'ja') {
+            window.location.replace("ja/");
+        } else {
+            window.location.replace("fr/");
+        }
+    </script>
+</head>
+<body></body>
+</html>

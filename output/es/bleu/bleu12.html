@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Azul - Art Mirror</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000028;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+        .full-image-container {
+            max-width: 90%;
+            max-height: 90vh;
+            text-align: center;
+            position: relative;
+            z-index: 5;
+        }
+        .full-image-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        /* ✅ voile par-dessus l'image */
+        .anti-copy-veil {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.15); /* ✅ plus visible */
+            z-index: 10;
+        }
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+            z-index: 20; /* reste au-dessus du voile */
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+    <a href="index.html" class="back-link">Volver a la colección</a>
+
+    <div class="full-image-container">
+        <img src="bleu12.jpg" alt="Azul">
+    </div>
+
+    <div class="anti-copy-veil"></div> <!-- ✅ voile couvre toute la page -->
+</body>
+</html>

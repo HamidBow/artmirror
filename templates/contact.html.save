@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ texts['contact_title'][lang] }} - {{ texts['site_title'][lang] }}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000028;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+        }
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+        .contact-content {
+            text-align: center;
+        }
+        .contact-content h1 {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        .contact-content p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-link">{{ texts['back_home'][lang] }}</a>
+
+    <div class="contact-content">
+        <h1>{{ texts['contact_title'][lang] }}</h1>
+        <p>E-mail: hamid@artmirror.com</p>
+        <p>Instagram: @hamid.artmirror</p>
+        <p>Téléphone: +33 6 12 34 56 78</p>
+    </div>
+</body>
+</html>

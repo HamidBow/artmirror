@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ collection_title }} - {{ file }}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: {{ background_color }};
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .lang-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #ffffff;
+            color: #000000;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            z-index: 10;
+        }
+        .image-container {
+            position: relative;
+            max-width: 95%;
+            max-height: 95%;
+            box-shadow: 0 6px 12px rgba(0,0,0,0.5);
+        }
+        .image-container img {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 0, 0, 0.5); /* VOILE ROUGE SEMI-TRANSPARENT POUR TEST */
+            z-index: 5; /* Ajout d'un z-index pour le mettre au-dessus de l'image */        }
+        .back {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background: rgba(0,0,0,0.6);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        .back:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        .nav-buttons {
+            position: fixed;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transform: translateY(-50%);
+            z-index: 10;
+        }
+        .nav-button {
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            padding: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            text-decoration: none;
+            line-height: 1;
+        }
+        .nav-button:hover {
+            background: rgba(0,0,0,0.8);
+        }
+        .nav-button.disabled {
+            visibility: hidden;
+        }
+    </style>
+</head>
+<body>
+    {% if lang == 'fr' %}
+    <a href="../../en/{{ slug }}/{{ file | splitext | first }}.html" class="lang-button">🇬🇧</a>
+    {% else %}
+    <a href="../../fr/{{ slug }}/{{ file | splitext | first }}.html" class="lang-button">🇫🇷</a>
+    {% endif %}
+
+    <a class="back" href="index.html">⬅ {{ texts['back_collection'][lang] }} {{ collection_title }}</a>
+
+    <div class="image-container">
+        <img src="{{ file }}" alt="{{ file }}">
+        <div class="overlay" oncontextmenu="return false;"></div>
+    </div>
+
+    <div class="nav-buttons">
+        {% if prev_img %}
+            <a href="{{ prev_img | splitext | first }}.html" class="nav-button">←</a>
+        {% else %}
+            <a href="#" class="nav-button disabled">←</a>
+        {% endif %}
+        {% if next_img %}
+            <a href="{{ next_img | splitext | first }}.html" class="nav-button">→</a>
+        {% else %}
+            <a href="#" class="nav-button disabled">→</a>
+        {% endif %}
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', event => event.preventDefault());
+    </script>
+</body>
+</html>

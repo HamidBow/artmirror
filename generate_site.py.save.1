@@ -1,0 +1,139 @@
+#!/usr/bin/env python3
+# coding: utf-8
+
+import os
+from pathlib import Path
+from PIL import Image
+from jinja2 import Environment, FileSystemLoader, select_autoescape
+
+# === CONFIG ===
+IMAGES_ROOT = os.path.expanduser("~/Bureau/site_images")
+OUTPUT_DIR = os.path.join(os.getcwd(), "output")
+THUMB_SIZE = (400, 400)
+FULL_MAX = (2000, 2000)
+
+SITE_TITLE = "Art Miror"
+SITE_SUBTITLE = "Création comme un miroir : l’art qui reflète l’âme"
+AUTHOR_NAME = "Ton Nom Ici"
+
+BG_COLOR = "#e9eef5"   # gris bleuté
+TITLE_COLOR = "#0b3b5a" # bleu nuit
+NAME_COLOR = "#2e3a8c"  # indigo
+# =================
+
+
+def ensure_dir(path):
+    os.makedirs(path, exist_ok=True)
+
+
+def resize_image(src_path, dest_path, max_size):
+    img = Image.open(src_path)
+    img.thumbnail(max_size)
+    img.save(dest_path)
+
+
+def main():
+    print("📂 Génération du site...")
+
+    # Créer output/
+    ensure_dir(OUTPUT_DIR)
+
+    # Préparer Jinja2
+    env = Environment(
+        loader=FileSystemLoader("templates"),
+        autoescape=select_autoescape()
+    )
+
+    # Charger les templates
+    index_tpl = env.get_template("index.html")
+    collection_tpl = env.get_template("collection.html")
+    image_tpl = env.get_template("image.html")
+    contact_tpl = env.get_template("contact.html")
+
+    collections = []
+    for collection in sorted(os.listdir(IMAGES_ROOT)):
+        cpath = os.path.join(IMAGES_ROOT, collection)
+        if not os.path.isdir(cpath) or collection == "cover" or collection == "contact":
+            continue
+
+        slug = collection.replace("collection_", "")
+        images = []
+
+        out_col_dir = os.path.join(OUTPUT_DIR, slug)
+        ensure_dir(out_col_dir)
+
+        for fname in sorted(os.listdir(cpath)):
+            fpath = os.path.join(cpath, fname)
+            if not fname.lower().endswith((".jpg", ".jpeg", ".png")):
+                continue
+
+            out_full = os.path.join(out_col_dir, fname)
+            resize_image(fpath, out_full, FULL_MAX)
+
+            thumb_name = "thumb_" + fname
+            out_thumb = os.path.join(out_col_dir, thumb_name)
+            resize_image(fpath, out_thumb, THUMB_SIZE)
+
+            images.append({"file": fname, "thumb": thumb_name})
+
+            # Générer page image
+            html = image_tpl.render(
+                site_title=SITE_TITLE,
+                bg_color=BG_COLOR,
+                image_file=fname,
+                collection=slug,
+            )
+            with open(os.path.join(out_col_dir, fname + ".html"), "w", encoding="utf-8") as f:
+                f.write(html)
+
+        collections.append({
+            "slug": slug,
+            "title": slug.capitalize(),
+            "images": images,
+            "cover": f"cover_{slug}.jpg"
+        })
+
+        # Générer page collection
+        html = collection_tpl.render(
+            site_title=SITE_TITLE,
+            bg_color=BG_COLOR,
+            collection_title=slug.capitalize(),
+            images=images,
+            collection=slug,
+        )
+        with open(os.path.join(out_col_dir, "index.html"), "w", encoding="utf-8") as f:
+            f.write(html)
+
+    # Générer page d’accueil
+    html = index_tpl.render(
+        site_title=SITE_TITLE,
+        site_subtitle=SITE_SUBTITLE,
+        author_name=AUTHOR_NAME,
+        bg_color=BG_COLOR,
+        title_color=TITLE_COLOR,
+        name_color=NAME_COLOR,
+        collections=collections
+    )
+    with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+    # Générer page contact
+    contact_img = os.path.join(IMAGES_ROOT, "contact", "contact.jpg")
+    out_contact_img = os.path.join(OUTPUT_DIR, "contact.jpg")
+    if os.path.exists(contact_img):
+        resize_image(contact_img, out_contact_img, FULL_MAX)
+
+    html = contact_tpl.render(
+        site_title=SITE_TITLE,
+        bg_color=BG_COLOR,
+        contact_img="contact.jpg"
+    )
+    with open(os.path.join(OUTPUT_DIR, "contact.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+    print("✅ Site généré dans:", OUTPUT_DIR)
+    print("➡️ Pour tester: cd output && python3 -m http.server 8000")
+
+
+if __name__ == "__main__":
+    main()

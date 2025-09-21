@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ collection_title }} - {{ texts['site_title'][lang] }}</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: {{ background_color }};
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            text-transform: uppercase;
+        }
+        .collections-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .collection-item {
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .collection-item:hover {
+            transform: scale(1.05);
+        }
+        .collection-item img {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .collection-item h3 {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+        .copyright {
+            font-size: 0.9em;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">{{ texts['back_home'][lang] }}</a>
+
+    <div class="header">
+        <h1>{{ collection_title }}</h1>
+    </div>
+
+    <div class="collections-grid">
+        {% for image in images %}
+        <a href="{{ image.file|splitext|first }}.html" class="collection-item">
+            <img src="./{{ image.file }}" alt="{{ collection_title }} - {{ image.file }}">
+        </a>
+        {% endfor %}
+    </div>
+
+    <div class="footer">
+        <p class="copyright">{{ texts['copyright_mention'][lang] }}</p>
+    </div>
+</body>
+</html>

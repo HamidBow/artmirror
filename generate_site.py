@@ -1,0 +1,158 @@
+import os
+import shutil
+from jinja2 import Environment, FileSystemLoader
+from data import LANGUAGES, TEXTS, COLLECTIONS, CONTACT_INFO
+
+# ---------- CONFIGURATION ----------
+IMAGES_ROOT = os.path.expanduser("~/Bureau/site_images")
+OUTPUT_DIR = os.path.expanduser("~/Bureau/artmirror_site/output")
+DOCUMENTS_DIR = os.path.expanduser("~/Bureau/artmirror_site/documents")
+BACKGROUND_COLOR = "#000028"
+PORTFOLIO_FILENAME = "mon-portfolio.pdf"
+
+# ---------- SETUP JINJA2 ----------
+env = Environment(loader=FileSystemLoader(os.path.expanduser("~/Bureau/artmirror_site/templates")))
+env.filters['splitext'] = os.path.splitext
+index_tpl = env.get_template("index.html")
+collection_tpl = env.get_template("collection.html")
+image_tpl = env.get_template("image.html")
+contact_tpl = env.get_template("contact.html")
+
+# ---------- UTILS ----------
+def create_dir(path):
+    if os.path.exists(path):
+        shutil.rmtree(path)
+    os.makedirs(path)
+
+# ---------- GENERATION DES PAGES ----------
+create_dir(OUTPUT_DIR)
+
+# Copie des documents à la racine du dossier de sortie
+if os.path.exists(DOCUMENTS_DIR):
+    shutil.copytree(DOCUMENTS_DIR, os.path.join(OUTPUT_DIR, 'documents'))
+
+for lang in LANGUAGES.keys():
+    print(f"🌍 Génération du site en {LANGUAGES[lang]}...")
+
+    lang_output_dir = os.path.join(OUTPUT_DIR, lang)
+    create_dir(lang_output_dir)
+
+    collections_data = []
+
+    # Générer les collections pour la langue actuelle
+    for collection in sorted(os.listdir(IMAGES_ROOT)):
+        cpath = os.path.join(IMAGES_ROOT, collection)
+        if not os.path.isdir(cpath) or collection == "backgrounds":
+            continue
+
+        slug = collection
+        cover_img = None
+        images = []
+
+        collection_title = COLLECTIONS.get(slug, {}).get(lang, slug.capitalize())
+
+        out_col_dir = os.path.join(lang_output_dir, slug)
+        os.makedirs(out_col_dir)
+
+        for fname in sorted(os.listdir(cpath)):
+            if fname.lower().endswith((".jpg", ".jpeg", ".png")):
+                images.append({"file": fname})
+                shutil.copy(os.path.join(cpath, fname), out_col_dir)
+                if "cover" in fname.lower():
+                    cover_img = fname
+
+        # Générer la page de collection
+        html = collection_tpl.render(
+            texts=TEXTS,
+            lang=lang,
+            slug=slug,
+            images=images,
+            collection_title=collection_title,
+            background_color=BACKGROUND_COLOR,
+            lang_data=LANGUAGES
+        )
+        with open(os.path.join(out_col_dir, "index.html"), "w", encoding="utf-8") as f:
+            f.write(html)
+
+        # Générer chaque page d'image
+        for i, img_data in enumerate(images):
+            fname = img_data['file']
+            html = image_tpl.render(
+                texts=TEXTS,
+                lang=lang,
+                collection_title=collection_title,
+                file=fname,
+                background_color=BACKGROUND_COLOR,
+                lang_data=LANGUAGES
+            )
+            with open(os.path.join(out_col_dir, f"{os.path.splitext(fname)[0]}.html"), "w", encoding="utf-8") as f:
+                f.write(html)
+
+        if not cover_img and images:
+            cover_img = images[0]["file"]
+
+        collections_data.append({
+            "title": collection_title,
+            "slug": slug,
+            "cover": os.path.join(slug, cover_img)
+        })
+
+    # Générer la page de contact
+    html = contact_tpl.render(
+        texts=TEXTS,
+        lang=lang,
+        lang_data=LANGUAGES,
+        contact_info=CONTACT_INFO
+    )
+    with open(os.path.join(lang_output_dir, "contact.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+    # Générer la page d'accueil
+    url_for_lang = {}
+    for code in LANGUAGES.keys():
+        url_for_lang[code] = f"../{code}/"
+
+    html = index_tpl.render(
+        texts=TEXTS,
+        lang=lang,
+        collections=collections_data,
+        background_color=BACKGROUND_COLOR,
+        lang_data=LANGUAGES,
+        url_for_portfolio=f"../documents/{PORTFOLIO_FILENAME}",
+        url_for_lang=url_for_lang
+    )
+    with open(os.path.join(lang_output_dir, "index.html"), "w", encoding="utf-8") as f:
+        f.write(html)
+
+# Générer la page de redirection à la racine de l'output
+redir_tpl = env.from_string("""
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirection...</title>
+    <script>
+        var lang = (navigator.language || navigator.userLanguage).split('-')[0];
+        if (lang === 'en') {
+            window.location.replace("en/");
+        } else if (lang === 'de') {
+            window.location.replace("de/");
+        } else if (lang === 'es') {
+            window.location.replace("es/");
+        } else if (lang === 'it') {
+            window.location.replace("it/");
+        } else if (lang === 'ja') {
+            window.location.replace("ja/");
+        } else {
+            window.location.replace("fr/");
+        }
+    </script>
+</head>
+<body></body>
+</html>
+""")
+with open(os.path.join(OUTPUT_DIR, "index.html"), "w", encoding="utf-8") as f:
+    f.write(redir_tpl.render())
+
+print("✅ Génération terminée !")
+
