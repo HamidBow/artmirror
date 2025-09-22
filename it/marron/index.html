@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marron - Art Mirror</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #000028;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2.5em;
+            text-transform: uppercase;
+        }
+        .collections-grid {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .collection-item {
+            text-align: center;
+            text-decoration: none;
+            color: white;
+            transition: transform 0.3s ease;
+        }
+        .collection-item:hover {
+            transform: scale(1.05);
+        }
+        .collection-item img {
+            width: 300px;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+        }
+        .collection-item h3 {
+            margin-top: 10px;
+            font-size: 1.2em;
+        }
+        .back-link {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 1.1em;
+        }
+        .footer {
+            margin-top: 40px;
+            text-align: center;
+            padding: 10px 0;
+            width: 100%;
+        }
+        .copyright {
+            font-size: 0.9em;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <a href="../index.html" class="back-link">Torna alla home</a>
+
+    <div class="header">
+        <h1>Marron</h1>
+    </div>
+
+    <div class="collections-grid">
+        
+        <a href="brown1.html" class="collection-item">
+            <img src="./brown1.jpg" alt="Marron - brown1.jpg">
+        </a>
+        
+        <a href="brown2.html" class="collection-item">
+            <img src="./brown2.jpg" alt="Marron - brown2.jpg">
+        </a>
+        
+        <a href="brown3.html" class="collection-item">
+            <img src="./brown3.jpg" alt="Marron - brown3.jpg">
+        </a>
+        
+        <a href="brown4.html" class="collection-item">
+            <img src="./brown4.jpg" alt="Marron - brown4.jpg">
+        </a>
+        
+        <a href="brown7.html" class="collection-item">
+            <img src="./brown7.jpg" alt="Marron - brown7.jpg">
+        </a>
+        
+        <a href="cover_marron.html" class="collection-item">
+            <img src="./cover_marron.jpg" alt="Marron - cover_marron.jpg">
+        </a>
+        
+    </div>
+
+    <div class="footer">
+        <p class="copyright">© Art Mirror - Hamid B.</p>
+    </div>
+</body>
+</html>
