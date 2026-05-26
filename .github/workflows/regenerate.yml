@@ -1,0 +1,41 @@
+name: Régénérer le site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'images/**'       # Déclenché quand des images sont ajoutées/supprimées
+      - 'data.py'         # Ou quand les traductions changent
+  workflow_dispatch:      # Ou manuellement via le bouton admin
+
+jobs:
+  regenerate:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: pip install jinja2
+
+      - name: Regenerate HTML
+        run: python3 generate_site.py
+
+      - name: Apply UI patches
+        run: python3 transform_html.py
+
+      - name: Commit & push generated files
+        run: |
+          git config user.name  "Art Mirror Bot"
+          git config user.email "bot@artmirror.local"
+          git add -A
+          git diff --staged --quiet && echo "Rien à commit" || \
+            git commit -m "Auto : régénération du site [skip ci]" && git push
