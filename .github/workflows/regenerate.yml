@@ -32,12 +32,6 @@ jobs:
       - name: Apply UI patches
         run: python3 transform_html.py
 
-      - name: Inject admin token
-        env:
-          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
-        run: |
-          sed -i "s|__ADMIN_TOKEN__|${ADMIN_TOKEN}|g" admin/index.html
-
       - name: Commit & push
         run: |
           git config user.name  "Art Mirror Bot"
