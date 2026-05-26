@@ -9,7 +9,7 @@ Script d'amélioration UI pour Art Mirror:
 import os
 import re
 
-SITE_ROOT = '/home/user/artmirror'
+SITE_ROOT = os.path.dirname(os.path.abspath(__file__))
 LANGS = ['fr', 'en', 'de', 'es', 'it', 'ja']
 COLLECTIONS_LIST = ['bleu', 'chevaux', 'marron', 'multi', 'ukraine']
 
@@ -31,14 +31,15 @@ BACK_TEXTS = {
     'ja': {'home': 'ホームに戻る', 'collection': 'コレクションに戻る'},
 }
 
-# Build image order for carousel (sorted, all images including cover)
+# Build image order for carousel from images/{col}/ (source canonique)
 collection_images = {}
 for col in COLLECTIONS_LIST:
     imgs = []
-    col_path = os.path.join(SITE_ROOT, 'en', col)
-    for f in sorted(os.listdir(col_path)):
-        if f.lower().endswith(('.jpg', '.jpeg', '.png')):
-            imgs.append(os.path.splitext(f)[0])
+    col_path = os.path.join(SITE_ROOT, 'images', col)
+    if os.path.isdir(col_path):
+        for f in sorted(os.listdir(col_path)):
+            if f.lower().endswith(('.jpg', '.jpeg', '.png')):
+                imgs.append(os.path.splitext(f)[0])
     collection_images[col] = imgs
 
 # ─────────────────────────────── CSS BLOCKS ──────────────────────────────────

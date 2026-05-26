@@ -89,11 +89,13 @@
     .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 14px; }
     .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
     .card-head {
-      padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px; display: flex; align-items: center; gap: 10px;
       cursor: pointer; user-select: none;
     }
-    .card-head h3 { font-size: .95em; }
-    .card-head span { font-size: .75em; color: var(--muted); }
+    .card-head h3 { font-size: .95em; flex: 1; }
+    .card-head span { font-size: .75em; color: var(--muted); flex-shrink: 0; }
+    .card-head .cover-thumb { width: 36px; height: 36px; border-radius: 6px; object-fit: cover; flex-shrink: 0; }
+    .cover-placeholder { width: 36px; height: 36px; border-radius: 6px; background: rgba(255,255,255,.06); flex-shrink: 0; }
     .card-body { display: none; padding: 12px 16px; border-top: 1px solid var(--border); }
     .card-body.open { display: block; }
 
@@ -301,31 +303,56 @@ async function loadCols() {
 }
 
 async function buildCard(col) {
-  const items = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
-  const imgs  = items.filter(i => /\.(jpe?g|png|webp)$/i.test(i.name));
+  const items    = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
+  const allImgs  = items.filter(i => /\.(jpe?g|png|webp)$/i.test(i.name));
+  const coverImg = allImgs.find(i => i.name.toLowerCase().includes('cover'));
+  const normImgs = allImgs.filter(i => !i.name.toLowerCase().includes('cover'));
+  const rawBase  = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/images/${col}/`;
+  const coverSrc = coverImg ? rawBase + encodeURIComponent(coverImg.name) : null;
 
   const card = document.createElement('div');
   card.className = 'card'; card.id = 'card-' + col;
   card.innerHTML = `
     <div class="card-head" onclick="toggleCard(this)">
+      ${coverSrc
+        ? `<img class="cover-thumb" src="${coverSrc}">`
+        : `<div class="cover-placeholder"></div>`}
       <h3>📁 ${col}</h3>
-      <span>${imgs.length} image${imgs.length !== 1 ? 's' : ''} ▾</span>
+      <span>${allImgs.length} image${allImgs.length !== 1 ? 's' : ''} ▾</span>
     </div>
     <div class="card-body">
+
+      <div class="sec-label" style="font-size:.7em;margin-bottom:8px">Image de couverture</div>
+      <div style="display:flex;gap:10px;align-items:center;margin-bottom:16px">
+        ${coverImg
+          ? `<div class="thumb" style="width:80px;height:80px;flex-shrink:0">
+               <img src="${coverSrc}">
+               <button class="thumb-del" onclick="delImg('${col}','${coverImg.name}','${coverImg.sha}',this)">✕</button>
+             </div>`
+          : `<div style="width:80px;height:80px;background:rgba(255,255,255,.04);border-radius:8px;
+               border:1px dashed rgba(255,255,255,.18);display:flex;align-items:center;
+               justify-content:center;color:var(--muted);font-size:.7em;flex-shrink:0">Aucune</div>`}
+        <label class="dropzone" style="flex:1;margin:0;padding:12px;cursor:pointer">
+          <input type="file" accept="image/*" style="display:none" onchange="uploadCover('${col}',this.files[0])">
+          🖼 ${coverImg ? 'Changer la couverture' : 'Ajouter une couverture'}
+        </label>
+      </div>
+
+      <div class="sec-label" style="font-size:.7em;margin-bottom:8px">Images (${normImgs.length})</div>
       <div class="imgs" id="imgs-${col}"></div>
       <label class="dropzone" id="zone-${col}">
         <input type="file" accept="image/*" multiple onchange="upload('${col}',this.files)">
         📤 Cliquez ou glissez des images ici
         <div class="prog"><div class="prog-fill" id="prog-${col}"></div></div>
       </label>
-      <button class="btn btn-danger" style="font-size:.8em" onclick="deleteCol('${col}')">🗑 Supprimer la collection</button>
+      <button class="btn btn-danger" style="font-size:.8em;margin-top:10px" onclick="deleteCol('${col}')">🗑 Supprimer la collection</button>
     </div>`;
 
   const ig = card.querySelector(`#imgs-${col}`);
-  for (const img of imgs) {
+  for (const img of normImgs) {
     const t = document.createElement('div');
     t.className = 'thumb';
-    t.innerHTML = `<img src="https://raw.githubusercontent.com/${REPO}/${BRANCH}/images/${col}/${encodeURIComponent(img.name)}" loading="lazy">
+    t.innerHTML = `<img src="${rawBase}${encodeURIComponent(img.name)}" loading="lazy">
       <button class="thumb-del" onclick="delImg('${col}','${img.name}','${img.sha}',this)">✕</button>
       <div class="thumb-name">${img.name}</div>`;
     ig.appendChild(t);
@@ -363,6 +390,38 @@ async function upload(col, files) {
 }
 
 const toB64 = f => new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(f); });
+
+// ── Upload cover ──────────────────────────────────────────────────────────────
+async function uploadCover(col, file) {
+  if (!file) return;
+  const ext = file.name.split('.').pop().toLowerCase();
+  const coverName = `cover_${col}.${ext}`;
+  const path = `images/${col}/${coverName}`;
+
+  // Supprimer l'ancienne cover si elle existe et a un nom différent
+  try {
+    const existing = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
+    for (const f of existing) {
+      if (f.name.toLowerCase().includes('cover') && f.name !== coverName) {
+        await gh('DELETE', `/repos/${REPO}/contents/images/${col}/${f.name}`,
+          { message: `Admin: remplacement couverture ${col}`, sha: f.sha, branch: BRANCH });
+      }
+    }
+  } catch {}
+
+  const b64 = await toB64(file);
+  let sha; try { sha = (await gh('GET', `/repos/${REPO}/contents/${path}?ref=${BRANCH}`)).sha; } catch {}
+  const body = { message: `Admin: couverture ${col}`, content: b64, branch: BRANCH };
+  if (sha) body.sha = sha;
+  try {
+    await gh('PUT', `/repos/${REPO}/contents/${path}`, body);
+    toast('✅ Couverture mise à jour', 'ok');
+    const old = $('card-' + col), wasOpen = old.querySelector('.card-body.open');
+    const neu = await buildCard(col);
+    if (wasOpen) neu.querySelector('.card-body').classList.add('open');
+    old.replaceWith(neu);
+  } catch(e) { toast(`❌ ${e.message}`, 'err'); }
+}
 
 // ── Delete image ──────────────────────────────────────────────────────────────
 async function delImg(col, name, sha, btn) {
