@@ -4,9 +4,9 @@ on:
   push:
     branches: [main]
     paths:
-      - 'images/**'       # Déclenché quand des images sont ajoutées/supprimées
-      - 'data.py'         # Ou quand les traductions changent
-  workflow_dispatch:      # Ou manuellement via le bouton admin
+      - 'images/**'
+      - 'data.py'
+  workflow_dispatch:
 
 jobs:
   regenerate:
@@ -32,7 +32,7 @@ jobs:
       - name: Apply UI patches
         run: python3 transform_html.py
 
-      - name: Commit & push generated files
+      - name: Commit & push
         run: |
           git config user.name  "Art Mirror Bot"
           git config user.email "bot@artmirror.local"

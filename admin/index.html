@@ -12,413 +12,395 @@
       --text: #e8e8f0; --muted: #8888aa;
     }
     body { background: var(--bg); color: var(--text); font-family: Arial, sans-serif; min-height: 100vh; }
+    code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
 
-    /* ── Login ── */
-    #login-screen {
+    /* ── Auth screen ── */
+    #auth-screen {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 100vh; gap: 16px; padding: 20px;
+      min-height: 100vh; gap: 16px; padding: 24px; text-align: center;
     }
-    #login-screen h1 { font-size: 2em; margin-bottom: 8px; }
-    #login-screen p { color: var(--muted); max-width: 460px; text-align: center; line-height: 1.5; }
-    #login-screen a { color: var(--accent); }
-    .token-input {
-      width: 100%; max-width: 460px; padding: 12px 16px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); font-size: 1em;
+    #auth-screen h1 { font-size: 1.9em; }
+    #auth-screen p { color: var(--muted); max-width: 400px; line-height: 1.5; font-size: 0.92em; }
+
+    /* ── Device code box ── */
+    #device-screen {
+      display: none; flex-direction: column; align-items: center; justify-content: center;
+      min-height: 100vh; gap: 20px; padding: 24px; text-align: center;
     }
-    .token-input:focus { outline: none; border-color: var(--accent); }
+    .code-box {
+      background: var(--surface); border: 2px solid var(--accent);
+      border-radius: 14px; padding: 28px 44px;
+    }
+    .code-box .url  { color: var(--accent); font-size: 1.1em; font-weight: 700; text-decoration: none; }
+    .code-box .url:hover { text-decoration: underline; }
+    .code-box .code { font-size: 2.4em; font-weight: 700; letter-spacing: .18em; margin: 14px 0; }
+    .code-box .hint { color: var(--muted); font-size: 0.88em; }
+    .pulse { animation: pulse 1.8s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+
+    /* ── App ── */
+    #app { display: none; flex-direction: column; min-height: 100vh; }
+    .topbar {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 13px 24px; display: flex; align-items: center; justify-content: space-between;
+    }
+    .topbar h1 { font-size: 1.08em; }
+    .topbar-r { display: flex; align-items: center; gap: 10px; }
+    .topbar-r img { width: 28px; height: 28px; border-radius: 50%; }
+    .topbar-r span { font-size: 0.85em; color: var(--muted); }
+    main { padding: 24px; max-width: 1100px; margin: 0 auto; width: 100%; }
 
     /* ── Buttons ── */
     .btn {
-      padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer;
-      font-size: 0.93em; font-weight: 600; transition: opacity 0.15s, transform 0.1s;
+      padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer;
+      font-size: 0.9em; font-weight: 600;
+      transition: opacity .15s, transform .1s;
       display: inline-flex; align-items: center; gap: 7px;
     }
-    .btn:hover { opacity: 0.85; }
-    .btn:active { transform: scale(0.97); }
-    .btn-primary  { background: var(--accent); color: white; }
-    .btn-danger   { background: var(--danger); color: white; }
-    .btn-ghost    { background: rgba(255,255,255,0.08); color: var(--text); border: 1px solid var(--border); }
-    .btn-success  { background: var(--success); color: white; }
+    .btn:hover:not(:disabled) { opacity: .82; }
+    .btn:active:not(:disabled) { transform: scale(.97); }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-primary { background: var(--accent); color: #fff; }
+    .btn-danger  { background: var(--danger);  color: #fff; }
+    .btn-ghost   { background: rgba(255,255,255,.07); color: var(--text); border: 1px solid var(--border); }
+    .btn-success { background: var(--success);  color: #fff; }
+    .btn-gh      { background: #24292f; color: #fff; border: 1px solid rgba(255,255,255,.15); font-size: 1em; padding: 12px 24px; }
 
-    /* ── App shell ── */
-    #app { display: none; }
-    .topbar {
-      background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
-    }
-    .topbar h1 { font-size: 1.2em; }
-    .topbar-actions { display: flex; gap: 10px; align-items: center; }
-    .user-badge {
-      font-size: 0.85em; color: var(--muted);
-      background: rgba(255,255,255,0.05); border: 1px solid var(--border);
-      border-radius: 6px; padding: 5px 10px;
-    }
-
-    main { padding: 24px; max-width: 1100px; margin: 0 auto; }
-
-    /* ── Section heading ── */
-    .section-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px;
-    }
-    .section-header h2 { font-size: 1.1em; color: var(--muted); text-transform: uppercase; letter-spacing: .05em; }
-
-    /* ── Collections grid ── */
-    .collections-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; margin-bottom: 32px; }
-    .collection-card {
-      background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
-      overflow: hidden; transition: border-color 0.2s;
-    }
-    .collection-card:hover { border-color: rgba(255,255,255,0.25); }
-    .collection-card-header {
-      padding: 14px 16px; display: flex; align-items: center; justify-content: space-between;
-      border-bottom: 1px solid var(--border); cursor: pointer;
-    }
-    .collection-card-header h3 { font-size: 1em; }
-    .collection-count { font-size: 0.8em; color: var(--muted); }
-    .collection-card-body { padding: 14px 16px; display: none; }
-    .collection-card-body.open { display: block; }
-
-    /* ── Images grid ── */
-    .images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-bottom: 12px; }
-    .image-thumb {
-      position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden;
-      background: rgba(255,255,255,0.04);
-    }
-    .image-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
-    .image-thumb .delete-btn {
-      position: absolute; top: 4px; right: 4px; width: 22px; height: 22px;
-      background: rgba(200,50,50,0.85); border: none; border-radius: 50%;
-      color: white; font-size: 0.75em; cursor: pointer; display: flex;
-      align-items: center; justify-content: center; opacity: 0;
-      transition: opacity 0.15s;
-    }
-    .image-thumb:hover .delete-btn { opacity: 1; }
-    .image-name { font-size: 0.65em; color: var(--muted); text-align: center; padding: 3px 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-
-    /* ── Upload zone ── */
-    .upload-zone {
-      border: 2px dashed var(--border); border-radius: 8px; padding: 20px;
-      text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s;
-      color: var(--muted); font-size: 0.9em;
-    }
-    .upload-zone:hover, .upload-zone.drag-over { border-color: var(--accent); background: rgba(79,142,247,0.05); }
-    .upload-zone input { display: none; }
-
-    /* ── Progress & toast ── */
-    .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
-    .progress-bar-fill { height: 100%; background: var(--accent); width: 0; transition: width 0.3s; }
-    #toast {
-      position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
-      background: #1e1e36; border: 1px solid var(--border); border-radius: 8px;
-      padding: 12px 20px; color: var(--text); font-size: 0.9em;
-      transition: transform 0.3s; z-index: 999; white-space: nowrap;
-    }
-    #toast.show { transform: translateX(-50%) translateY(0); }
-    #toast.success { border-color: var(--success); }
-    #toast.error   { border-color: var(--danger); }
-
-    /* ── Regen banner ── */
+    /* ── Regen ── */
     .regen-banner {
-      background: rgba(79,142,247,0.1); border: 1px solid rgba(79,142,247,0.3);
-      border-radius: 8px; padding: 14px 18px; display: flex; align-items: center;
-      justify-content: space-between; margin-bottom: 24px; gap: 12px; flex-wrap: wrap;
+      background: rgba(79,142,247,.08); border: 1px solid rgba(79,142,247,.28);
+      border-radius: 10px; padding: 14px 18px;
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 24px; gap: 12px; flex-wrap: wrap;
     }
-    .regen-banner p { font-size: 0.9em; color: var(--muted); }
+    .regen-banner p { font-size: .84em; color: var(--muted); margin-top: 3px; }
 
-    /* ── New collection form ── */
-    .new-col-form { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .new-col-input {
-      flex: 1; min-width: 160px; padding: 9px 14px;
+    /* ── Section ── */
+    .sec-label { font-size: .75em; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .text-input {
+      flex: 1; min-width: 200px; padding: 9px 14px;
       background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); font-size: 0.92em;
+      border-radius: 8px; color: var(--text); font-size: .9em;
     }
-    .new-col-input:focus { outline: none; border-color: var(--accent); }
+    .text-input:focus { outline: none; border-color: var(--accent); }
 
-    /* Spinner */
-    .spin { display: inline-block; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
+    /* ── Cards ── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 14px; }
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .card-head {
+      padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+      cursor: pointer; user-select: none;
+    }
+    .card-head h3 { font-size: .95em; }
+    .card-head span { font-size: .75em; color: var(--muted); }
+    .card-body { display: none; padding: 12px 16px; border-top: 1px solid var(--border); }
+    .card-body.open { display: block; }
+
+    /* ── Images ── */
+    .imgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px,1fr)); gap: 6px; margin-bottom: 12px; }
+    .thumb { position: relative; aspect-ratio:1; border-radius: 6px; overflow: hidden; background: rgba(255,255,255,.04); }
+    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    .thumb-del {
+      position:absolute; inset:0; background:rgba(200,40,40,.8);
+      border:none; color:#fff; font-size:1.3em; cursor:pointer;
+      opacity:0; display:flex; align-items:center; justify-content:center;
+      transition:opacity .15s;
+    }
+    .thumb:hover .thumb-del { opacity:1; }
+    .thumb-name { font-size:.58em; color:var(--muted); text-align:center; padding:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+    /* ── Upload ── */
+    .dropzone {
+      border: 2px dashed var(--border); border-radius: 8px; padding: 16px;
+      text-align: center; cursor: pointer; color: var(--muted); font-size: .85em;
+      transition: border-color .2s, background .2s; margin-bottom: 10px;
+    }
+    .dropzone:hover, .dropzone.over { border-color: var(--accent); background: rgba(79,142,247,.04); }
+    .dropzone input { display: none; }
+    .prog { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+    .prog-fill { height:100%; background:var(--accent); width:0; border-radius:2px; transition:width .3s; }
+
+    /* ── Toast ── */
+    #toast {
+      position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
+      background:#1a1a30; border:1px solid var(--border); border-radius:8px;
+      padding:10px 20px; font-size:.87em; z-index:999;
+      transition:transform .3s; white-space:nowrap;
+    }
+    #toast.show { transform:translateX(-50%) translateY(0); }
+    #toast.ok  { border-color:var(--success); }
+    #toast.err { border-color:var(--danger); }
+
+    .spin { display:inline-block; animation:spin 1s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
   </style>
 </head>
 <body>
 
 <!-- ── Login ── -->
-<div id="login-screen">
+<div id="auth-screen">
   <h1>🎨 Art Mirror Admin</h1>
-  <p>Entrez un <a href="https://github.com/settings/tokens/new?scopes=repo&description=ArtMirror+Admin" target="_blank">Personal Access Token GitHub</a> avec la permission <code>repo</code>.</p>
-  <input type="password" id="token-input" class="token-input" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" autocomplete="off">
-  <button class="btn btn-primary" onclick="login()">Connexion</button>
-  <p id="login-error" style="color:var(--danger);display:none;"></p>
+  <p>Connectez-vous avec votre compte GitHub pour gérer les collections et les images.</p>
+  <button class="btn btn-gh" onclick="startDeviceFlow()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 21.795 24 17.295 24 12c0-6.63-5.37-12-12-12"/>
+    </svg>
+    Se connecter avec GitHub
+  </button>
+</div>
+
+<!-- ── Device flow ── -->
+<div id="device-screen">
+  <h1>🔐 Autorisation GitHub</h1>
+  <div class="code-box">
+    <div class="hint">Rendez-vous sur</div>
+    <a id="dev-url" class="url" href="https://github.com/login/device" target="_blank">github.com/login/device</a>
+    <div class="hint" style="margin-top:10px">et entrez ce code :</div>
+    <div class="code" id="dev-code">· · · · · · · ·</div>
+    <div class="hint pulse" id="dev-status">En attente d'autorisation…</div>
+  </div>
+  <button class="btn btn-ghost" onclick="showAuth()">Annuler</button>
 </div>
 
 <!-- ── App ── -->
 <div id="app">
   <div class="topbar">
-    <h1>🎨 Art Mirror Admin</h1>
-    <div class="topbar-actions">
-      <span class="user-badge" id="user-badge">…</span>
-      <button class="btn btn-ghost" onclick="logout()">Déconnexion</button>
+    <h1>🎨 Art Mirror — Admin</h1>
+    <div class="topbar-r">
+      <img id="u-avatar" src="" alt="" style="display:none">
+      <span id="u-login"></span>
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:.8em;" onclick="logout()">Déconnexion</button>
     </div>
   </div>
-
   <main>
-    <!-- Regen banner -->
     <div class="regen-banner">
       <div>
-        <strong>Régénérer le site</strong>
-        <p>Après avoir ajouté ou supprimé des images, lancez la régénération pour mettre à jour le site en production.</p>
+        <strong>⚡ Régénérer le site</strong>
+        <p>Après ajout ou suppression d'images, lancez la régénération pour mettre à jour GitHub Pages (~1 min).</p>
       </div>
-      <button class="btn btn-success" onclick="triggerRegen(this)">⚡ Régénérer le site</button>
+      <button class="btn btn-success" onclick="regen(this)">Régénérer</button>
     </div>
 
-    <!-- New collection -->
-    <div class="section-header">
-      <h2>Collections</h2>
+    <div class="sec-label">Collections</div>
+    <div class="row">
+      <input type="text" id="new-col" class="text-input" placeholder="Nouvelle collection (ex : portraits)">
+      <button class="btn btn-primary" onclick="createCol()">+ Créer</button>
     </div>
-    <div class="new-col-form" style="margin-bottom:20px;">
-      <input type="text" id="new-col-name" class="new-col-input" placeholder="Nom de la nouvelle collection (ex: portraits)">
-      <button class="btn btn-primary" onclick="createCollection()">+ Nouvelle collection</button>
-    </div>
-
-    <!-- Collections -->
-    <div id="collections-grid" class="collections-grid">
-      <p style="color:var(--muted)">Chargement…</p>
-    </div>
+    <div id="grid" class="grid"><p style="color:var(--muted)"><span class="spin">⏳</span> Chargement…</p></div>
   </main>
 </div>
 
 <div id="toast"></div>
 
 <script>
-const REPO  = 'HamidBow/artmirror';
-const API   = 'https://api.github.com';
+// ── Config ───────────────────────────────────────────────────────────────────
+// Le client_id est public (il n'y a pas de client_secret dans le Device Flow).
+// Créez votre OAuth App sur https://github.com/settings/applications/new
+// en cochant "Enable Device Flow", puis remplacez la valeur ci-dessous.
+const CLIENT_ID = '0v23liE27nyL6MVVMhgE';
+
+const REPO   = 'HamidBow/artmirror';
 const BRANCH = 'main';
+const API    = 'https://api.github.com';
+
 let TOKEN = '';
 
-// ── Auth ─────────────────────────────────────────────────────────────────────
-async function login() {
-  TOKEN = document.getElementById('token-input').value.trim();
-  if (!TOKEN) return;
-  try {
-    const res = await gh('GET', '/user');
-    localStorage.setItem('am_token', TOKEN);
-    document.getElementById('login-screen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
-    document.getElementById('user-badge').textContent = '👤 ' + res.login;
-    loadCollections();
-  } catch(e) {
-    document.getElementById('login-error').textContent = 'Token invalide ou accès refusé.';
-    document.getElementById('login-error').style.display = 'block';
-  }
-}
+// ── Screens ───────────────────────────────────────────────────────────────────
+const $ = id => document.getElementById(id);
+function showAuth()   { $('auth-screen').style.display='flex'; $('device-screen').style.display='none'; $('app').style.display='none'; }
+function showDevice() { $('auth-screen').style.display='none'; $('device-screen').style.display='flex'; $('app').style.display='none'; }
+function showApp()    { $('auth-screen').style.display='none'; $('device-screen').style.display='none'; $('app').style.display='flex'; }
 
-function logout() {
-  localStorage.removeItem('am_token');
-  TOKEN = '';
-  document.getElementById('login-screen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-}
-
-// Auto-login
+// ── Init ──────────────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
   const saved = localStorage.getItem('am_token');
-  if (saved) {
-    document.getElementById('token-input').value = saved;
-    TOKEN = saved;
-    login();
-  }
+  if (saved) { TOKEN = saved; openApp().catch(() => { TOKEN=''; showAuth(); }); }
+  else showAuth();
 });
 
-// ── GitHub API helper ─────────────────────────────────────────────────────────
+// ── Device Flow ───────────────────────────────────────────────────────────────
+async function startDeviceFlow() {
+  showDevice();
+  $('dev-status').textContent = 'Initialisation…';
+
+  try {
+    const r1 = await fetch('https://github.com/login/device/code', {
+      method: 'POST',
+      headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+      body: JSON.stringify({ client_id: CLIENT_ID, scope: 'repo' })
+    });
+    if (!r1.ok) throw new Error('Erreur GitHub. Vérifiez le CLIENT_ID dans admin/index.html');
+    const { device_code, user_code, verification_uri, interval = 5, expires_in } = await r1.json();
+
+    $('dev-url').href = verification_uri;
+    $('dev-url').textContent = verification_uri.replace('https://', '');
+    $('dev-code').textContent = user_code;
+    $('dev-status').textContent = 'En attente d\'autorisation…';
+    window.open(verification_uri, '_blank', 'width=900,height=700');
+
+    // Poll
+    const deadline = Date.now() + expires_in * 1000;
+    let wait = interval * 1000;
+    while (Date.now() < deadline) {
+      await sleep(wait);
+      const r2 = await fetch('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify({ client_id: CLIENT_ID, device_code, grant_type: 'urn:ietf:params:oauth:grant-type:device_code' })
+      });
+      const d = await r2.json();
+      if (d.access_token)                      { TOKEN = d.access_token; localStorage.setItem('am_token', TOKEN); await openApp(); return; }
+      if (d.error === 'authorization_pending')  continue;
+      if (d.error === 'slow_down')              { wait += 5000; continue; }
+      if (d.error === 'expired_token')          { toast('Code expiré, réessayez.', 'err'); showAuth(); return; }
+      throw new Error(d.error_description || d.error);
+    }
+    toast('Délai dépassé.', 'err'); showAuth();
+  } catch(e) {
+    $('dev-status').textContent = '❌ ' + e.message;
+    toast(e.message, 'err');
+  }
+}
+
+async function openApp() {
+  const u = await gh('GET', '/user');
+  $('u-login').textContent = u.login;
+  if (u.avatar_url) { $('u-avatar').src = u.avatar_url; $('u-avatar').style.display = 'block'; }
+  showApp();
+  loadCols();
+}
+
+function logout() { localStorage.removeItem('am_token'); TOKEN = ''; showAuth(); }
+
+// ── API ───────────────────────────────────────────────────────────────────────
 async function gh(method, path, body) {
-  const opts = {
-    method,
-    headers: { Authorization: 'Bearer ' + TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
-  };
+  const opts = { method, headers: { Authorization: 'Bearer ' + TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } };
   if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
   const res = await fetch(API + path, opts);
-  if (!res.ok) throw new Error(await res.text());
   if (res.status === 204) return null;
-  return res.json();
+  const json = await res.json();
+  if (!res.ok) throw new Error(json.message || res.statusText);
+  return json;
 }
+const sleep = ms => new Promise(r => setTimeout(r, ms));
 
 // ── Collections ───────────────────────────────────────────────────────────────
-async function loadCollections() {
-  const grid = document.getElementById('collections-grid');
-  grid.innerHTML = '<p style="color:var(--muted)"><span class="spin">⏳</span> Chargement…</p>';
+async function loadCols() {
+  const g = $('grid');
+  g.innerHTML = '<p style="color:var(--muted)"><span class="spin">⏳</span> Chargement…</p>';
   try {
-    const items = await gh('GET', `/repos/${REPO}/contents/images?ref=${BRANCH}`);
+    let items;
+    try { items = await gh('GET', `/repos/${REPO}/contents/images?ref=${BRANCH}`); }
+    catch { g.innerHTML = '<p style="color:var(--muted)">Aucune collection. Créez-en une ci-dessus.</p>'; return; }
     const cols = items.filter(i => i.type === 'dir');
-    if (cols.length === 0) { grid.innerHTML = '<p style="color:var(--muted)">Aucune collection trouvée dans images/</p>'; return; }
-    grid.innerHTML = '';
-    for (const col of cols) {
-      const card = await buildCollectionCard(col.name);
-      grid.appendChild(card);
-    }
-  } catch(e) {
-    grid.innerHTML = `<p style="color:var(--danger)">Erreur : ${e.message}</p>`;
-  }
+    if (!cols.length) { g.innerHTML = '<p style="color:var(--muted)">Aucune collection.</p>'; return; }
+    g.innerHTML = '';
+    for (const c of cols) g.appendChild(await buildCard(c.name));
+  } catch(e) { g.innerHTML = `<p style="color:var(--danger)">Erreur : ${e.message}</p>`; }
 }
 
-async function buildCollectionCard(colName) {
-  const images = await gh('GET', `/repos/${REPO}/contents/images/${colName}?ref=${BRANCH}`);
-  const imgFiles = images.filter(i => /\.(jpe?g|png|webp)$/i.test(i.name));
+async function buildCard(col) {
+  const items = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
+  const imgs  = items.filter(i => /\.(jpe?g|png|webp)$/i.test(i.name));
 
   const card = document.createElement('div');
-  card.className = 'collection-card';
+  card.className = 'card'; card.id = 'card-' + col;
   card.innerHTML = `
-    <div class="collection-card-header" onclick="toggleCard(this)">
-      <h3>📁 ${colName}</h3>
-      <span class="collection-count">${imgFiles.length} image${imgFiles.length !== 1 ? 's' : ''}</span>
+    <div class="card-head" onclick="toggleCard(this)">
+      <h3>📁 ${col}</h3>
+      <span>${imgs.length} image${imgs.length !== 1 ? 's' : ''} ▾</span>
     </div>
-    <div class="collection-card-body">
-      <div class="images-grid" id="grid-${colName}"></div>
-      <label class="upload-zone" id="upload-zone-${colName}">
-        <input type="file" accept="image/*" multiple onchange="uploadImages('${colName}', this.files)">
-        <div>📤 Cliquez ou glissez des images ici</div>
-        <div class="progress-bar"><div class="progress-bar-fill" id="prog-${colName}"></div></div>
+    <div class="card-body">
+      <div class="imgs" id="imgs-${col}"></div>
+      <label class="dropzone" id="zone-${col}">
+        <input type="file" accept="image/*" multiple onchange="upload('${col}',this.files)">
+        📤 Cliquez ou glissez des images ici
+        <div class="prog"><div class="prog-fill" id="prog-${col}"></div></div>
       </label>
-      <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap;">
-        <button class="btn btn-danger" style="font-size:0.8em;" onclick="deleteCollection('${colName}')">🗑 Supprimer la collection</button>
-      </div>
+      <button class="btn btn-danger" style="font-size:.8em" onclick="deleteCol('${col}')">🗑 Supprimer la collection</button>
     </div>`;
 
-  const grid = card.querySelector(`#grid-${colName}`);
-  for (const img of imgFiles) {
-    const thumb = document.createElement('div');
-    thumb.className = 'image-thumb';
-    thumb.innerHTML = `
-      <img src="https://raw.githubusercontent.com/${REPO}/${BRANCH}/images/${colName}/${img.name}" loading="lazy">
-      <button class="delete-btn" title="Supprimer" onclick="deleteImage('${colName}', '${img.name}', '${img.sha}', this)">✕</button>
-      <div class="image-name">${img.name}</div>`;
-    grid.appendChild(thumb);
+  const ig = card.querySelector(`#imgs-${col}`);
+  for (const img of imgs) {
+    const t = document.createElement('div');
+    t.className = 'thumb';
+    t.innerHTML = `<img src="https://raw.githubusercontent.com/${REPO}/${BRANCH}/images/${col}/${encodeURIComponent(img.name)}" loading="lazy">
+      <button class="thumb-del" onclick="delImg('${col}','${img.name}','${img.sha}',this)">✕</button>
+      <div class="thumb-name">${img.name}</div>`;
+    ig.appendChild(t);
   }
 
-  // Drag & drop
-  const zone = card.querySelector(`#upload-zone-${colName}`);
-  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
-  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('drag-over'); uploadImages(colName, e.dataTransfer.files); });
-
+  const zone = card.querySelector(`#zone-${col}`);
+  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('over'); upload(col, e.dataTransfer.files); });
   return card;
 }
 
-function toggleCard(header) {
-  const body = header.nextElementSibling;
-  body.classList.toggle('open');
-}
+function toggleCard(h) { h.nextElementSibling.classList.toggle('open'); }
 
 // ── Upload ────────────────────────────────────────────────────────────────────
-async function uploadImages(colName, files) {
-  const prog = document.getElementById(`prog-${colName}`);
+async function upload(col, files) {
+  const prog = $('prog-' + col);
   let done = 0;
   for (const file of files) {
-    const base64 = await toBase64(file);
-    const path = `images/${colName}/${file.name}`;
-    try {
-      // Check if file exists (to get SHA for update)
-      let sha = undefined;
-      try { const existing = await gh('GET', `/repos/${REPO}/contents/${path}?ref=${BRANCH}`); sha = existing.sha; } catch(e) {}
-      const body = { message: `Admin: ajout de ${file.name} dans ${colName}`, content: base64, branch: BRANCH };
-      if (sha) body.sha = sha;
-      await gh('PUT', `/repos/${REPO}/contents/${path}`, body);
-      done++;
-      prog.style.width = (done / files.length * 100) + '%';
-      toast(`✅ ${file.name} uploadée`, 'success');
-    } catch(e) {
-      toast(`❌ Erreur pour ${file.name} : ${e.message}`, 'error');
-    }
+    const b64 = await toB64(file);
+    const path = `images/${col}/${file.name}`;
+    let sha; try { sha = (await gh('GET', `/repos/${REPO}/contents/${path}?ref=${BRANCH}`)).sha; } catch {}
+    const body = { message: `Admin: ajout ${col}/${file.name}`, content: b64, branch: BRANCH };
+    if (sha) body.sha = sha;
+    try { await gh('PUT', `/repos/${REPO}/contents/${path}`, body); done++; prog.style.width = (done/files.length*100)+'%'; toast(`✅ ${file.name}`, 'ok'); }
+    catch(e) { toast(`❌ ${file.name}: ${e.message}`, 'err'); }
   }
-  setTimeout(() => { prog.style.width = '0'; loadCollections(); }, 1200);
+  setTimeout(async () => {
+    prog.style.width = '0';
+    const old = $('card-' + col), wasOpen = old.querySelector('.card-body.open');
+    const neu = await buildCard(col);
+    if (wasOpen) neu.querySelector('.card-body').classList.add('open');
+    old.replaceWith(neu);
+  }, 1000);
 }
 
-function toBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(reader.result.split(',')[1]);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
+const toB64 = f => new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(f); });
 
 // ── Delete image ──────────────────────────────────────────────────────────────
-async function deleteImage(colName, fileName, sha, btn) {
-  if (!confirm(`Supprimer "${fileName}" de la collection "${colName}" ?`)) return;
+async function delImg(col, name, sha, btn) {
+  if (!confirm(`Supprimer "${name}" ?`)) return;
   btn.textContent = '…';
-  try {
-    await gh('DELETE', `/repos/${REPO}/contents/images/${colName}/${fileName}`, {
-      message: `Admin: suppression de ${fileName} de ${colName}`, sha, branch: BRANCH
-    });
-    btn.closest('.image-thumb').remove();
-    toast(`🗑 ${fileName} supprimée`, 'success');
-  } catch(e) {
-    toast(`❌ ${e.message}`, 'error');
-    btn.textContent = '✕';
-  }
+  try { await gh('DELETE', `/repos/${REPO}/contents/images/${col}/${name}`, { message: `Admin: suppression ${col}/${name}`, sha, branch: BRANCH }); btn.closest('.thumb').remove(); toast(`🗑 ${name}`, 'ok'); }
+  catch(e) { toast(e.message, 'err'); btn.textContent = '✕'; }
 }
 
-// ── Create collection ─────────────────────────────────────────────────────────
-async function createCollection() {
-  const input = document.getElementById('new-col-name');
-  const name  = input.value.trim().toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_-]/g, '');
-  if (!name) { toast('Nom de collection invalide', 'error'); return; }
-  try {
-    // GitHub API needs at least one file to create a folder
-    await gh('PUT', `/repos/${REPO}/contents/images/${name}/.gitkeep`, {
-      message: `Admin: nouvelle collection "${name}"`,
-      content: btoa(''),
-      branch: BRANCH
-    });
-    input.value = '';
-    toast(`📁 Collection "${name}" créée`, 'success');
-    loadCollections();
-  } catch(e) {
-    toast(`❌ ${e.message}`, 'error');
-  }
+// ── Create / delete collection ────────────────────────────────────────────────
+async function createCol() {
+  const input = $('new-col');
+  const name = input.value.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_-]/g,'');
+  if (!name) { toast('Nom invalide', 'err'); return; }
+  try { await gh('PUT', `/repos/${REPO}/contents/images/${name}/.gitkeep`, { message: `Admin: nouvelle collection "${name}"`, content: btoa(''), branch: BRANCH }); input.value=''; toast(`📁 "${name}" créée`, 'ok'); loadCols(); }
+  catch(e) { toast(e.message, 'err'); }
 }
 
-// ── Delete collection ─────────────────────────────────────────────────────────
-async function deleteCollection(colName) {
-  if (!confirm(`Supprimer toute la collection "${colName}" et ses images ? Cette action est irréversible.`)) return;
+async function deleteCol(col) {
+  if (!confirm(`Supprimer toute la collection "${col}" ?`)) return;
   try {
-    const images = await gh('GET', `/repos/${REPO}/contents/images/${colName}?ref=${BRANCH}`);
-    for (const img of images) {
-      await gh('DELETE', `/repos/${REPO}/contents/images/${colName}/${img.name}`, {
-        message: `Admin: suppression de ${colName}/${img.name}`, sha: img.sha, branch: BRANCH
-      });
-    }
-    toast(`🗑 Collection "${colName}" supprimée`, 'success');
-    loadCollections();
-  } catch(e) {
-    toast(`❌ ${e.message}`, 'error');
-  }
+    const items = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
+    for (const f of items) await gh('DELETE', `/repos/${REPO}/contents/images/${col}/${f.name}`, { message: `Admin: suppression ${col}/${f.name}`, sha: f.sha, branch: BRANCH });
+    toast(`🗑 "${col}" supprimée`, 'ok'); loadCols();
+  } catch(e) { toast(e.message, 'err'); }
 }
 
 // ── Regen ─────────────────────────────────────────────────────────────────────
-async function triggerRegen(btn) {
-  const orig = btn.textContent;
-  btn.textContent = '⏳ Envoi…';
-  btn.disabled = true;
-  try {
-    await gh('POST', `/repos/${REPO}/actions/workflows/regenerate.yml/dispatches`, { ref: BRANCH });
-    toast('🚀 Régénération lancée ! Le site sera mis à jour dans ~1 minute.', 'success');
-  } catch(e) {
-    toast(`❌ ${e.message}`, 'error');
-  }
-  btn.textContent = orig;
-  btn.disabled = false;
+async function regen(btn) {
+  btn.disabled=true; btn.textContent='⏳ Envoi…';
+  try { await gh('POST', `/repos/${REPO}/actions/workflows/regenerate.yml/dispatches`, { ref: BRANCH }); toast('🚀 Régénération lancée !', 'ok'); }
+  catch(e) { toast(e.message, 'err'); }
+  btn.disabled=false; btn.textContent='Régénérer';
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
-let toastTimer;
-function toast(msg, type = '') {
-  const el = document.getElementById('toast');
-  el.textContent = msg;
-  el.className = 'show ' + type;
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.className = ''; }, 3500);
-}
+let _tt;
+function toast(msg, type='') { const el=$('toast'); el.textContent=msg; el.className='show '+type; clearTimeout(_tt); _tt=setTimeout(()=>el.className='',3500); }
 </script>
 </body>
 </html>
