@@ -7,140 +7,216 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0d0d1a; --surface: #161628; --border: rgba(255,255,255,0.1);
-      --accent: #4f8ef7; --danger: #e05c5c; --success: #4caf7d;
-      --text: #e8e8f0; --muted: #8888aa;
+      --bg: #0d0d1a; --surface: #13132a; --surface2: #1a1a35;
+      --border: rgba(255,255,255,0.09); --border2: rgba(255,255,255,0.16);
+      --accent: #4f8ef7; --danger: #e05c5c; --success: #4caf7d; --warn: #f0a044;
+      --text: #e8e8f0; --muted: #7878a0;
     }
-    body { background: var(--bg); color: var(--text); font-family: Arial, sans-serif; min-height: 100vh; }
-    code { background: rgba(255,255,255,0.08); padding: 2px 6px; border-radius: 4px; font-size: 0.88em; }
+    body { background: var(--bg); color: var(--text); font-family: -apple-system, Arial, sans-serif; min-height: 100vh; }
 
-    /* ── Auth screen ── */
-    #auth-screen {
+    /* ── Screens ── */
+    #auth-screen, #device-screen {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 100vh; gap: 16px; padding: 24px; text-align: center;
+      min-height: 100vh; gap: 18px; padding: 24px; text-align: center;
     }
-    #auth-screen h1 { font-size: 1.9em; }
-    #auth-screen p { color: var(--muted); max-width: 400px; line-height: 1.5; font-size: 0.92em; }
+    #auth-screen h1, #device-screen h1 { font-size: 2em; }
+    #auth-screen p { color: var(--muted); max-width: 380px; line-height: 1.6; font-size: .92em; }
+    #device-screen { display: none; }
+    #app { display: none; flex-direction: column; min-height: 100vh; }
 
-    /* ── Device code box ── */
-    #device-screen {
-      display: none; flex-direction: column; align-items: center; justify-content: center;
-      min-height: 100vh; gap: 20px; padding: 24px; text-align: center;
-    }
-    .code-box {
-      background: var(--surface); border: 2px solid var(--accent);
-      border-radius: 14px; padding: 28px 44px;
-    }
+    /* ── Device code ── */
+    .code-box { background: var(--surface2); border: 2px solid var(--accent); border-radius: 16px; padding: 30px 48px; }
     .code-box .url  { color: var(--accent); font-size: 1.1em; font-weight: 700; text-decoration: none; }
     .code-box .url:hover { text-decoration: underline; }
-    .code-box .code { font-size: 2.4em; font-weight: 700; letter-spacing: .18em; margin: 14px 0; }
-    .code-box .hint { color: var(--muted); font-size: 0.88em; }
+    .code-box .user-code { font-size: 2.6em; font-weight: 700; letter-spacing: .2em; margin: 16px 0; font-family: monospace; }
+    .code-box .hint { color: var(--muted); font-size: .88em; }
     .pulse { animation: pulse 1.8s ease-in-out infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.45} }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-    /* ── App ── */
-    #app { display: none; flex-direction: column; min-height: 100vh; }
+    /* ── Topbar ── */
     .topbar {
       background: var(--surface); border-bottom: 1px solid var(--border);
-      padding: 13px 24px; display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 28px; display: flex; align-items: center; justify-content: space-between;
+      position: sticky; top: 0; z-index: 200;
     }
-    .topbar h1 { font-size: 1.08em; }
+    .topbar-brand { font-size: 1em; font-weight: 700; display: flex; align-items: center; gap: 8px; }
     .topbar-r { display: flex; align-items: center; gap: 10px; }
-    .topbar-r img { width: 28px; height: 28px; border-radius: 50%; }
-    .topbar-r span { font-size: 0.85em; color: var(--muted); }
-    main { padding: 24px; max-width: 1100px; margin: 0 auto; width: 100%; }
+    .topbar-r img { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border2); }
+    .topbar-r .username { font-size: .85em; color: var(--muted); }
+
+    /* ── Main layout ── */
+    main { padding: 28px; max-width: 1200px; margin: 0 auto; width: 100%; }
 
     /* ── Buttons ── */
     .btn {
       padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer;
-      font-size: 0.9em; font-weight: 600;
+      font-size: .88em; font-weight: 600; white-space: nowrap;
       transition: opacity .15s, transform .1s;
-      display: inline-flex; align-items: center; gap: 7px;
+      display: inline-flex; align-items: center; gap: 6px;
     }
     .btn:hover:not(:disabled) { opacity: .82; }
     .btn:active:not(:disabled) { transform: scale(.97); }
-    .btn:disabled { opacity: .4; cursor: not-allowed; }
-    .btn-primary { background: var(--accent); color: #fff; }
-    .btn-danger  { background: var(--danger);  color: #fff; }
-    .btn-ghost   { background: rgba(255,255,255,.07); color: var(--text); border: 1px solid var(--border); }
+    .btn:disabled { opacity: .38; cursor: not-allowed; }
+    .btn-primary { background: var(--accent);   color: #fff; }
+    .btn-danger  { background: var(--danger);   color: #fff; }
+    .btn-ghost   { background: rgba(255,255,255,.07); color: var(--text); border: 1px solid var(--border2); }
     .btn-success { background: var(--success);  color: #fff; }
-    .btn-gh      { background: #24292f; color: #fff; border: 1px solid rgba(255,255,255,.15); font-size: 1em; padding: 12px 24px; }
+    .btn-warn    { background: var(--warn);      color: #000; }
+    .btn-gh      { background: #24292f; color: #fff; border: 1px solid rgba(255,255,255,.15); font-size: 1em; padding: 13px 26px; border-radius: 10px; }
 
-    /* ── Regen ── */
+    /* ── Regen banner ── */
     .regen-banner {
-      background: rgba(79,142,247,.08); border: 1px solid rgba(79,142,247,.28);
-      border-radius: 10px; padding: 14px 18px;
+      background: rgba(79,142,247,.07); border: 1px solid rgba(79,142,247,.22);
+      border-radius: 12px; padding: 16px 20px;
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 24px; gap: 12px; flex-wrap: wrap;
+      margin-bottom: 32px; gap: 16px; flex-wrap: wrap;
     }
-    .regen-banner p { font-size: .84em; color: var(--muted); margin-top: 3px; }
+    .regen-banner p { font-size: .83em; color: var(--muted); margin-top: 4px; }
 
     /* ── Section ── */
-    .sec-label { font-size: .75em; color: var(--muted); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 12px; }
-    .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; }
+    .sec-label {
+      font-size: .7em; font-weight: 700; color: var(--muted);
+      text-transform: uppercase; letter-spacing: .1em; margin-bottom: 12px;
+    }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
     .text-input {
-      flex: 1; min-width: 200px; padding: 9px 14px;
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 8px; color: var(--text); font-size: .9em;
+      flex: 1; min-width: 220px; padding: 10px 14px;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 9px; color: var(--text); font-size: .9em;
     }
     .text-input:focus { outline: none; border-color: var(--accent); }
 
-    /* ── Cards ── */
-    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px,1fr)); gap: 14px; }
-    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+    /* ── Grid ── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px,1fr)); gap: 16px; }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; overflow: hidden;
+      transition: border-color .2s;
+    }
+    .card:hover { border-color: var(--border2); }
     .card-head {
-      padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;
+      padding: 14px 18px; display: flex; align-items: center; gap: 12px;
       cursor: pointer; user-select: none;
     }
-    .card-head h3 { font-size: .95em; }
-    .card-head span { font-size: .75em; color: var(--muted); }
-    .card-body { display: none; padding: 12px 16px; border-top: 1px solid var(--border); }
+    .card-head:hover { background: rgba(255,255,255,.03); }
+    .cover-thumb { width: 40px; height: 40px; border-radius: 7px; object-fit: cover; flex-shrink: 0; }
+    .cover-placeholder { width: 40px; height: 40px; border-radius: 7px; background: rgba(255,255,255,.05); flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 1.2em; }
+    .card-head-info { flex: 1; min-width: 0; }
+    .card-head-info h3 { font-size: .97em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .card-head-info span { font-size: .72em; color: var(--muted); }
+    .chevron { color: var(--muted); font-size: .8em; transition: transform .2s; flex-shrink: 0; }
+    .card-body { display: none; border-top: 1px solid var(--border); }
     .card-body.open { display: block; }
+    .card-body.open + .card-head .chevron,
+    .card-head.open-head .chevron { transform: rotate(180deg); }
 
-    /* ── Images ── */
-    .imgs { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px,1fr)); gap: 6px; margin-bottom: 12px; }
-    .thumb { position: relative; aspect-ratio:1; border-radius: 6px; overflow: hidden; background: rgba(255,255,255,.04); }
-    .thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+    /* ── Card section ── */
+    .card-section { padding: 14px 18px; }
+    .card-section + .card-section { border-top: 1px solid var(--border); }
+    .card-section-label { font-size: .68em; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: .09em; margin-bottom: 10px; }
+
+    /* ── Cover row ── */
+    .cover-row { display: flex; align-items: center; gap: 12px; }
+    .cover-preview { width: 88px; height: 88px; border-radius: 9px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border2); }
+    .cover-empty {
+      width: 88px; height: 88px; border-radius: 9px; flex-shrink: 0;
+      background: rgba(255,255,255,.04); border: 1.5px dashed var(--border2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); font-size: .72em; text-align: center; padding: 6px;
+    }
+    .cover-upload-label {
+      flex: 1; border: 1.5px dashed var(--border2); border-radius: 9px;
+      padding: 14px; text-align: center; cursor: pointer; color: var(--muted);
+      font-size: .84em; transition: border-color .2s, background .2s;
+    }
+    .cover-upload-label:hover { border-color: var(--accent); background: rgba(79,142,247,.04); color: var(--text); }
+
+    /* ── Images grid ── */
+    .imgs {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 7px;
+      min-height: 10px;
+    }
+    .thumb {
+      position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden;
+      background: rgba(255,255,255,.04); cursor: grab;
+      border: 2px solid transparent;
+      transition: border-color .15s, opacity .15s;
+    }
+    .thumb:active { cursor: grabbing; }
+    .thumb img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
     .thumb-del {
-      position:absolute; inset:0; background:rgba(200,40,40,.8);
-      border:none; color:#fff; font-size:1.3em; cursor:pointer;
-      opacity:0; display:flex; align-items:center; justify-content:center;
-      transition:opacity .15s;
+      position: absolute; top: 4px; right: 4px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: rgba(200,40,40,.85); border: none; color: #fff;
+      font-size: .75em; cursor: pointer; opacity: 0;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity .15s;
     }
-    .thumb:hover .thumb-del { opacity:1; }
-    .thumb-name { font-size:.58em; color:var(--muted); text-align:center; padding:2px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .thumb:hover .thumb-del { opacity: 1; }
+    .thumb-name {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      font-size: .55em; color: rgba(255,255,255,.8);
+      background: rgba(0,0,20,.65); padding: 3px 5px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      opacity: 0; transition: opacity .15s;
+    }
+    .thumb:hover .thumb-name { opacity: 1; }
+    /* Drag states */
+    .thumb.dragging { opacity: .25; border-color: var(--accent); }
+    .thumb.drag-over { border-color: var(--accent); background: rgba(79,142,247,.12); }
 
-    /* ── Upload ── */
-    .dropzone {
-      border: 2px dashed var(--border); border-radius: 8px; padding: 16px;
-      text-align: center; cursor: pointer; color: var(--muted); font-size: .85em;
-      transition: border-color .2s, background .2s; margin-bottom: 10px;
+    /* ── Order bar ── */
+    .order-bar {
+      display: none; align-items: center; justify-content: space-between;
+      padding: 8px 12px; background: rgba(240,160,68,.08);
+      border: 1px solid rgba(240,160,68,.25); border-radius: 8px;
+      margin-bottom: 10px; gap: 10px;
     }
-    .dropzone:hover, .dropzone.over { border-color: var(--accent); background: rgba(79,142,247,.04); }
+    .order-bar span { font-size: .78em; color: var(--warn); }
+
+    /* ── Upload dropzone ── */
+    .dropzone {
+      border: 1.5px dashed var(--border2); border-radius: 9px; padding: 14px;
+      text-align: center; cursor: pointer; color: var(--muted); font-size: .84em;
+      transition: border-color .2s, background .2s; margin-top: 10px; display: block;
+    }
+    .dropzone:hover, .dropzone.over { border-color: var(--accent); background: rgba(79,142,247,.04); color: var(--text); }
     .dropzone input { display: none; }
     .prog { height: 3px; background: var(--border); border-radius: 2px; margin-top: 8px; overflow: hidden; }
-    .prog-fill { height:100%; background:var(--accent); width:0; border-radius:2px; transition:width .3s; }
+    .prog-fill { height: 100%; background: var(--accent); width: 0; border-radius: 2px; transition: width .3s; }
+
+    /* ── Danger zone ── */
+    .danger-zone { padding: 12px 18px; border-top: 1px solid var(--border); }
 
     /* ── Toast ── */
     #toast {
-      position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(80px);
-      background:#1a1a30; border:1px solid var(--border); border-radius:8px;
-      padding:10px 20px; font-size:.87em; z-index:999;
-      transition:transform .3s; white-space:nowrap;
+      position: fixed; bottom: 22px; left: 50%; transform: translateX(-50%) translateY(80px);
+      background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px;
+      padding: 10px 22px; font-size: .86em; z-index: 999;
+      transition: transform .28s; white-space: nowrap; box-shadow: 0 4px 20px rgba(0,0,0,.4);
     }
-    #toast.show { transform:translateX(-50%) translateY(0); }
-    #toast.ok  { border-color:var(--success); }
-    #toast.err { border-color:var(--danger); }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.ok  { border-color: var(--success); }
+    #toast.err { border-color: var(--danger); }
+    #toast.warn { border-color: var(--warn); }
 
-    .spin { display:inline-block; animation:spin 1s linear infinite; }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    .spin { display: inline-block; animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Empty state ── */
+    .empty { padding: 40px 20px; text-align: center; color: var(--muted); font-size: .9em; }
   </style>
 </head>
 <body>
 
 <!-- ── Login ── -->
 <div id="auth-screen">
-  <h1>🎨 Art Mirror Admin</h1>
+  <div style="font-size:3em">🎨</div>
+  <h1>Art Mirror Admin</h1>
   <p>Connectez-vous avec votre compte GitHub pour gérer les collections et les images.</p>
   <button class="btn btn-gh" onclick="startDeviceFlow()">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
@@ -152,12 +228,13 @@
 
 <!-- ── Device flow ── -->
 <div id="device-screen">
-  <h1>🔐 Autorisation GitHub</h1>
+  <div style="font-size:2.5em">🔐</div>
+  <h1>Autorisation GitHub</h1>
   <div class="code-box">
     <div class="hint">Rendez-vous sur</div>
     <a id="dev-url" class="url" href="https://github.com/login/device" target="_blank">github.com/login/device</a>
-    <div class="hint" style="margin-top:10px">et entrez ce code :</div>
-    <div class="code" id="dev-code">· · · · · · · ·</div>
+    <div class="hint" style="margin-top:12px">et entrez ce code :</div>
+    <div class="user-code" id="dev-code">· · · · · · · ·</div>
     <div class="hint pulse" id="dev-status">En attente d'autorisation…</div>
   </div>
   <button class="btn btn-ghost" onclick="showAuth()">Annuler</button>
@@ -166,28 +243,32 @@
 <!-- ── App ── -->
 <div id="app">
   <div class="topbar">
-    <h1>🎨 Art Mirror — Admin</h1>
+    <div class="topbar-brand">🎨 Art Mirror — Admin</div>
     <div class="topbar-r">
       <img id="u-avatar" src="" alt="" style="display:none">
-      <span id="u-login"></span>
-      <button class="btn btn-ghost" style="padding:6px 12px;font-size:.8em;" onclick="logout()">Déconnexion</button>
+      <span class="username" id="u-login"></span>
+      <button class="btn btn-ghost" style="padding:6px 12px;font-size:.8em" onclick="logout()">Déconnexion</button>
     </div>
   </div>
   <main>
+    <!-- Regen banner -->
     <div class="regen-banner">
       <div>
         <strong>⚡ Régénérer le site</strong>
-        <p>Après ajout ou suppression d'images, lancez la régénération pour mettre à jour GitHub Pages (~1 min).</p>
+        <p>Après ajout, suppression ou réorganisation d'images, lancez la régénération pour mettre à jour GitHub Pages (~1 min).</p>
       </div>
-      <button class="btn btn-success" onclick="regen(this)">Régénérer</button>
+      <button class="btn btn-success" onclick="regen(this)">▶ Régénérer</button>
     </div>
 
+    <!-- Collections -->
     <div class="sec-label">Collections</div>
     <div class="row">
-      <input type="text" id="new-col" class="text-input" placeholder="Nouvelle collection (ex : portraits)">
+      <input type="text" id="new-col" class="text-input" placeholder="Nom de la nouvelle collection (ex : portraits)">
       <button class="btn btn-primary" onclick="createCol()">+ Créer</button>
     </div>
-    <div id="grid" class="grid"><p style="color:var(--muted)"><span class="spin">⏳</span> Chargement…</p></div>
+    <div id="grid" class="grid">
+      <div class="empty"><span class="spin">⏳</span> Chargement…</div>
+    </div>
   </main>
 </div>
 
@@ -195,27 +276,24 @@
 
 <script>
 // ── Config ───────────────────────────────────────────────────────────────────
-// Le client_id est public (il n'y a pas de client_secret dans le Device Flow).
-// Créez votre OAuth App sur https://github.com/settings/applications/new
-// en cochant "Enable Device Flow", puis remplacez la valeur ci-dessous.
 const CLIENT_ID = 'Ov23liE27nyL6MVVMhgE';
-
-const REPO   = 'HamidBow/artmirror';
-const BRANCH = 'main';
-const API    = 'https://api.github.com';
+const PROXY     = 'https://art-mirror-oauth.hamidchine.workers.dev';
+const REPO      = 'HamidBow/artmirror';
+const BRANCH    = 'main';
+const API       = 'https://api.github.com';
 
 let TOKEN = '';
 
-// ── Screens ───────────────────────────────────────────────────────────────────
-const $ = id => document.getElementById(id);
-function showAuth()   { $('auth-screen').style.display='flex'; $('device-screen').style.display='none'; $('app').style.display='none'; }
-function showDevice() { $('auth-screen').style.display='none'; $('device-screen').style.display='flex'; $('app').style.display='none'; }
-function showApp()    { $('auth-screen').style.display='none'; $('device-screen').style.display='none'; $('app').style.display='flex'; }
+// ── Screens ──────────────────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const show = id => ['auth-screen','device-screen','app'].forEach(s => $(s).style.display = s === id ? (s === 'app' ? 'flex' : 'flex') : 'none');
+function showAuth()   { show('auth-screen'); }
+function showDevice() { show('device-screen'); }
+function showApp()    { show('app'); }
 
-// ── Init ──────────────────────────────────────────────────────────────────────
 window.addEventListener('load', () => {
-  const saved = localStorage.getItem('am_token');
-  if (saved) { TOKEN = saved; openApp().catch(() => { TOKEN=''; showAuth(); }); }
+  const t = localStorage.getItem('am_token');
+  if (t) { TOKEN = t; openApp().catch(() => { TOKEN = ''; localStorage.removeItem('am_token'); showAuth(); }); }
   else showAuth();
 });
 
@@ -223,44 +301,38 @@ window.addEventListener('load', () => {
 async function startDeviceFlow() {
   showDevice();
   $('dev-status').textContent = 'Initialisation…';
-
   try {
-    const r1 = await fetch('https://art-mirror-oauth.hamidchine.workers.dev/device/code', {
+    const r1 = await fetch(`${PROXY}/device/code`, {
       method: 'POST',
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ client_id: CLIENT_ID, scope: 'repo' })
     });
-    if (!r1.ok) throw new Error('Erreur GitHub. Vérifiez le CLIENT_ID dans admin/index.html');
+    if (!r1.ok) throw new Error('Erreur GitHub (' + r1.status + ')');
     const { device_code, user_code, verification_uri, interval = 5, expires_in } = await r1.json();
-
     $('dev-url').href = verification_uri;
     $('dev-url').textContent = verification_uri.replace('https://', '');
     $('dev-code').textContent = user_code;
     $('dev-status').textContent = 'En attente d\'autorisation…';
     window.open(verification_uri, '_blank', 'width=900,height=700');
 
-    // Poll
     const deadline = Date.now() + expires_in * 1000;
     let wait = interval * 1000;
     while (Date.now() < deadline) {
       await sleep(wait);
-      const r2 = await fetch('https://art-mirror-oauth.hamidchine.workers.dev/access_token', {
+      const r2 = await fetch(`${PROXY}/access_token`, {
         method: 'POST',
         headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({ client_id: CLIENT_ID, device_code, grant_type: 'urn:ietf:params:oauth:grant-type:device_code' })
       });
       const d = await r2.json();
-      if (d.access_token)                      { TOKEN = d.access_token; localStorage.setItem('am_token', TOKEN); await openApp(); return; }
-      if (d.error === 'authorization_pending')  continue;
-      if (d.error === 'slow_down')              { wait += 5000; continue; }
-      if (d.error === 'expired_token')          { toast('Code expiré, réessayez.', 'err'); showAuth(); return; }
+      if (d.access_token) { TOKEN = d.access_token; localStorage.setItem('am_token', TOKEN); await openApp(); return; }
+      if (d.error === 'authorization_pending') continue;
+      if (d.error === 'slow_down') { wait += 5000; continue; }
+      if (d.error === 'expired_token') { toast('Code expiré, réessayez.', 'err'); showAuth(); return; }
       throw new Error(d.error_description || d.error);
     }
     toast('Délai dépassé.', 'err'); showAuth();
-  } catch(e) {
-    $('dev-status').textContent = '❌ ' + e.message;
-    toast(e.message, 'err');
-  }
+  } catch(e) { $('dev-status').textContent = '❌ ' + e.message; toast(e.message, 'err'); }
 }
 
 async function openApp() {
@@ -270,12 +342,14 @@ async function openApp() {
   showApp();
   loadCols();
 }
-
 function logout() { localStorage.removeItem('am_token'); TOKEN = ''; showAuth(); }
 
 // ── API ───────────────────────────────────────────────────────────────────────
 async function gh(method, path, body) {
-  const opts = { method, headers: { Authorization: 'Bearer ' + TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' } };
+  const opts = {
+    method,
+    headers: { Authorization: 'Bearer ' + TOKEN, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' }
+  };
   if (body) { opts.headers['Content-Type'] = 'application/json'; opts.body = JSON.stringify(body); }
   const res = await fetch(API + path, opts);
   if (res.status === 204) return null;
@@ -288,119 +362,361 @@ const sleep = ms => new Promise(r => setTimeout(r, ms));
 // ── Collections ───────────────────────────────────────────────────────────────
 async function loadCols() {
   const g = $('grid');
-  g.innerHTML = '<p style="color:var(--muted)"><span class="spin">⏳</span> Chargement…</p>';
+  g.innerHTML = '<div class="empty"><span class="spin">⏳</span> Chargement…</div>';
   try {
     let items;
     try { items = await gh('GET', `/repos/${REPO}/contents/images?ref=${BRANCH}`); }
-    catch { g.innerHTML = '<p style="color:var(--muted)">Aucune collection. Créez-en une ci-dessus.</p>'; return; }
+    catch { g.innerHTML = '<div class="empty">Aucune collection. Créez-en une ci-dessus.</div>'; return; }
     const cols = items.filter(i => i.type === 'dir');
-    if (!cols.length) { g.innerHTML = '<p style="color:var(--muted)">Aucune collection.</p>'; return; }
+    if (!cols.length) { g.innerHTML = '<div class="empty">Aucune collection.</div>'; return; }
     g.innerHTML = '';
     for (const c of cols) g.appendChild(await buildCard(c.name));
-  } catch(e) { g.innerHTML = `<p style="color:var(--danger)">Erreur : ${e.message}</p>`; }
+  } catch(e) { g.innerHTML = `<div class="empty" style="color:var(--danger)">Erreur : ${e.message}</div>`; }
 }
 
 async function buildCard(col) {
-  const items = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
-  const imgs  = items.filter(i => /\.(jpe?g|png|webp)$/i.test(i.name));
+  const items   = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
+  const allImgs = items.filter(i => /\.(jpe?g|png|webp)$/i.test(i.name));
+  const coverImg  = allImgs.find(i => i.name.toLowerCase().includes('cover'));
+  let   normImgs  = allImgs.filter(i => !i.name.toLowerCase().includes('cover'));
+  const rawBase   = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/images/${col}/`;
+
+  // Load custom order
+  let customOrder = null;
+  try {
+    const orderFile = items.find(i => i.name === '_order.json');
+    if (orderFile) {
+      const data = await gh('GET', `/repos/${REPO}/contents/images/${col}/_order.json?ref=${BRANCH}`);
+      customOrder = JSON.parse(atob(data.content.replace(/\n/g, '')));
+    }
+  } catch {}
+  if (customOrder) {
+    const map = Object.fromEntries(normImgs.map(i => [i.name, i]));
+    const ordered = customOrder.filter(n => map[n]).map(n => map[n]);
+    const rest    = normImgs.filter(i => !customOrder.includes(i.name));
+    normImgs = [...ordered, ...rest];
+  }
+
+  const coverSrc = coverImg ? rawBase + encodeURIComponent(coverImg.name) : null;
 
   const card = document.createElement('div');
   card.className = 'card'; card.id = 'card-' + col;
+
   card.innerHTML = `
     <div class="card-head" onclick="toggleCard(this)">
-      <h3>📁 ${col}</h3>
-      <span>${imgs.length} image${imgs.length !== 1 ? 's' : ''} ▾</span>
+      ${coverSrc
+        ? `<img class="cover-thumb" src="${coverSrc}" loading="lazy">`
+        : `<div class="cover-placeholder">📁</div>`}
+      <div class="card-head-info">
+        <h3>${col}</h3>
+        <span>${allImgs.length} image${allImgs.length !== 1 ? 's' : ''}${coverImg ? ' · couverture ✓' : ''}</span>
+      </div>
+      <span class="chevron">▾</span>
     </div>
+
     <div class="card-body">
-      <div class="imgs" id="imgs-${col}"></div>
-      <label class="dropzone" id="zone-${col}">
-        <input type="file" accept="image/*" multiple onchange="upload('${col}',this.files)">
-        📤 Cliquez ou glissez des images ici
-        <div class="prog"><div class="prog-fill" id="prog-${col}"></div></div>
-      </label>
-      <button class="btn btn-danger" style="font-size:.8em" onclick="deleteCol('${col}')">🗑 Supprimer la collection</button>
+
+      <!-- Cover section -->
+      <div class="card-section">
+        <div class="card-section-label">Couverture</div>
+        <div class="cover-row">
+          ${coverImg
+            ? `<div style="position:relative;flex-shrink:0">
+                 <img class="cover-preview" src="${coverSrc}" loading="lazy">
+                 <button onclick="delImg('${col}','${coverImg.name}','${coverImg.sha}',this)"
+                   style="position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;
+                          background:rgba(200,40,40,.85);border:none;color:#fff;font-size:.75em;
+                          cursor:pointer;display:flex;align-items:center;justify-content:center;">✕</button>
+               </div>`
+            : `<div class="cover-empty">Pas de couverture</div>`}
+          <label class="cover-upload-label">
+            <input type="file" accept="image/*" style="display:none" onchange="uploadCover('${col}',this.files[0])">
+            🖼 ${coverImg ? 'Changer la couverture' : 'Ajouter une couverture'}
+          </label>
+        </div>
+      </div>
+
+      <!-- Images section -->
+      <div class="card-section">
+        <div class="card-section-label">Images (${normImgs.length})</div>
+        <div class="order-bar" id="orderbar-${col}">
+          <span>⚠ Ordre modifié — non sauvegardé</span>
+          <button class="btn btn-warn" style="font-size:.78em;padding:5px 12px"
+            onclick="saveOrder('${col}',this)">💾 Sauvegarder l'ordre</button>
+        </div>
+        <div class="imgs" id="imgs-${col}"></div>
+        <label class="dropzone" id="zone-${col}">
+          <input type="file" accept="image/*" multiple onchange="upload('${col}',this.files)">
+          📤 Cliquez ou glissez des images ici
+          <div class="prog"><div class="prog-fill" id="prog-${col}"></div></div>
+        </label>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="danger-zone">
+        <button class="btn btn-danger" style="font-size:.8em;width:100%" onclick="deleteCol('${col}')">
+          🗑 Supprimer la collection « ${col} »
+        </button>
+      </div>
+
     </div>`;
 
+  // Populate images
   const ig = card.querySelector(`#imgs-${col}`);
-  for (const img of imgs) {
-    const t = document.createElement('div');
-    t.className = 'thumb';
-    t.innerHTML = `<img src="https://raw.githubusercontent.com/${REPO}/${BRANCH}/images/${col}/${encodeURIComponent(img.name)}" loading="lazy">
-      <button class="thumb-del" onclick="delImg('${col}','${img.name}','${img.sha}',this)">✕</button>
-      <div class="thumb-name">${img.name}</div>`;
-    ig.appendChild(t);
+  for (const img of normImgs) {
+    ig.appendChild(makeThumb(col, img.name, img.sha, rawBase));
   }
+  ig.dataset.original = normImgs.map(i => i.name).join('|');
 
+  // Dropzone drag & drop
   const zone = card.querySelector(`#zone-${col}`);
-  zone.addEventListener('dragover',  e => { e.preventDefault(); zone.classList.add('over'); });
+  zone.addEventListener('dragover',  e => { if (e.dataTransfer.types.includes('Files')) { e.preventDefault(); zone.classList.add('over'); } });
   zone.addEventListener('dragleave', () => zone.classList.remove('over'));
-  zone.addEventListener('drop', e => { e.preventDefault(); zone.classList.remove('over'); upload(col, e.dataTransfer.files); });
+  zone.addEventListener('drop', e => { if (e.dataTransfer.types.includes('Files')) { e.preventDefault(); zone.classList.remove('over'); upload(col, e.dataTransfer.files); } });
+
+  // Init drag-sort
+  initDragSort(ig, col);
+
   return card;
 }
 
-function toggleCard(h) { h.nextElementSibling.classList.toggle('open'); }
+function makeThumb(col, name, sha, rawBase) {
+  const t = document.createElement('div');
+  t.className = 'thumb';
+  t.dataset.name = name;
+  t.dataset.sha  = sha;
+  t.innerHTML = `
+    <img src="${rawBase}${encodeURIComponent(name)}" loading="lazy">
+    <button class="thumb-del" onclick="delImg('${col}','${name}','${sha}',this)">✕</button>
+    <div class="thumb-name">${name}</div>`;
+  return t;
+}
 
-// ── Upload ────────────────────────────────────────────────────────────────────
+function toggleCard(head) {
+  const body = head.nextElementSibling;
+  body.classList.toggle('open');
+  head.classList.toggle('open-head');
+}
+
+// ── Drag-sort ────────────────────────────────────────────────────────────────
+let _dragged = null;
+
+function initDragSort(ig, col) {
+  function refresh() {
+    ig.querySelectorAll('.thumb').forEach(t => {
+      t.setAttribute('draggable', 'true');
+      t.removeEventListener('dragstart', onStart);
+      t.removeEventListener('dragend',   onEnd);
+      t.removeEventListener('dragover',  onOver);
+      t.removeEventListener('drop',      onDrop);
+      t.addEventListener('dragstart', onStart);
+      t.addEventListener('dragend',   onEnd);
+      t.addEventListener('dragover',  onOver);
+      t.addEventListener('drop',      onDrop);
+    });
+  }
+  function onStart(e) {
+    // Only activate if not clicking the delete button
+    if (e.target.closest('.thumb-del')) { e.preventDefault(); return; }
+    _dragged = this;
+    this.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', this.dataset.name);
+  }
+  function onEnd() {
+    this.classList.remove('dragging');
+    ig.querySelectorAll('.thumb').forEach(t => t.classList.remove('drag-over'));
+    _dragged = null;
+    checkOrderChanged(ig, col);
+    refresh();
+  }
+  function onOver(e) {
+    if (!_dragged || _dragged === this) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+    ig.querySelectorAll('.thumb').forEach(t => t.classList.remove('drag-over'));
+    this.classList.add('drag-over');
+  }
+  function onDrop(e) {
+    e.preventDefault();
+    if (!_dragged || _dragged === this) return;
+    const thumbs = [...ig.querySelectorAll('.thumb')];
+    const fi = thumbs.indexOf(_dragged), ti = thumbs.indexOf(this);
+    if (fi < ti) ig.insertBefore(_dragged, this.nextSibling);
+    else         ig.insertBefore(_dragged, this);
+    ig.querySelectorAll('.thumb').forEach(t => t.classList.remove('drag-over'));
+  }
+  refresh();
+}
+
+function getOrder(ig) {
+  return [...ig.querySelectorAll('.thumb')].map(t => t.dataset.name);
+}
+
+function checkOrderChanged(ig, col) {
+  const bar = $('orderbar-' + col);
+  if (!bar) return;
+  const current  = getOrder(ig).join('|');
+  const original = ig.dataset.original || '';
+  bar.style.display = current !== original ? 'flex' : 'none';
+}
+
+async function saveOrder(col, btn) {
+  const ig    = $('imgs-' + col);
+  const order = getOrder(ig);
+  const json  = JSON.stringify(order, null, 2);
+  // btoa with UTF-8 support
+  const b64   = btoa(unescape(encodeURIComponent(json)));
+  const path  = `images/${col}/_order.json`;
+  let sha; try { sha = (await gh('GET', `/repos/${REPO}/contents/${path}?ref=${BRANCH}`)).sha; } catch {}
+  const body  = { message: `Admin: ordre ${col}`, content: b64, branch: BRANCH };
+  if (sha) body.sha = sha;
+  btn.disabled = true; btn.textContent = '⏳';
+  try {
+    await gh('PUT', `/repos/${REPO}/contents/${path}`, body);
+    ig.dataset.original = order.join('|');
+    $('orderbar-' + col).style.display = 'none';
+    toast('✅ Ordre sauvegardé', 'ok');
+  } catch(e) { toast('❌ ' + e.message, 'err'); }
+  btn.disabled = false; btn.textContent = '💾 Sauvegarder l\'ordre';
+}
+
+// ── Upload images ─────────────────────────────────────────────────────────────
 async function upload(col, files) {
-  const prog = $('prog-' + col);
+  const prog    = $('prog-' + col);
+  const rawBase = `https://raw.githubusercontent.com/${REPO}/${BRANCH}/images/${col}/`;
   let done = 0;
   for (const file of files) {
-    const b64 = await toB64(file);
+    const b64  = await toB64(file);
     const path = `images/${col}/${file.name}`;
     let sha; try { sha = (await gh('GET', `/repos/${REPO}/contents/${path}?ref=${BRANCH}`)).sha; } catch {}
     const body = { message: `Admin: ajout ${col}/${file.name}`, content: b64, branch: BRANCH };
     if (sha) body.sha = sha;
-    try { await gh('PUT', `/repos/${REPO}/contents/${path}`, body); done++; prog.style.width = (done/files.length*100)+'%'; toast(`✅ ${file.name}`, 'ok'); }
-    catch(e) { toast(`❌ ${file.name}: ${e.message}`, 'err'); }
+    try {
+      const res = await gh('PUT', `/repos/${REPO}/contents/${path}`, body);
+      done++;
+      prog.style.width = (done / files.length * 100) + '%';
+      toast(`✅ ${file.name}`, 'ok');
+      // Add thumb live
+      const ig = $('imgs-' + col);
+      if (ig) {
+        const newSha = res.content ? res.content.sha : sha || '';
+        ig.appendChild(makeThumb(col, file.name, newSha, rawBase));
+        initDragSort(ig, col);
+        // Update header count
+        const head = document.querySelector(`#card-${col} .card-head-info span`);
+        if (head) {
+          const n = ig.querySelectorAll('.thumb').length;
+          head.textContent = head.textContent.replace(/\d+ image/, `${n} image`);
+        }
+      }
+    } catch(e) { toast(`❌ ${file.name}: ${e.message}`, 'err'); }
   }
-  setTimeout(async () => {
-    prog.style.width = '0';
-    const old = $('card-' + col), wasOpen = old.querySelector('.card-body.open');
-    const neu = await buildCard(col);
-    if (wasOpen) neu.querySelector('.card-body').classList.add('open');
-    old.replaceWith(neu);
-  }, 1000);
+  setTimeout(() => { prog.style.width = '0'; }, 1200);
 }
 
-const toB64 = f => new Promise((res,rej) => { const r=new FileReader(); r.onload=()=>res(r.result.split(',')[1]); r.onerror=rej; r.readAsDataURL(f); });
+const toB64 = f => new Promise((res, rej) => {
+  const r = new FileReader();
+  r.onload = () => res(r.result.split(',')[1]);
+  r.onerror = rej;
+  r.readAsDataURL(f);
+});
+
+// ── Upload cover ──────────────────────────────────────────────────────────────
+async function uploadCover(col, file) {
+  if (!file) return;
+  const ext      = file.name.split('.').pop().toLowerCase();
+  const coverName = `cover_${col}.${ext}`;
+  const path      = `images/${col}/${coverName}`;
+  // Remove existing cover(s) with different name
+  try {
+    const existing = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
+    for (const f of existing) {
+      if (f.name.toLowerCase().includes('cover') && f.name !== coverName) {
+        await gh('DELETE', `/repos/${REPO}/contents/images/${col}/${f.name}`,
+          { message: `Admin: remplacement couverture ${col}`, sha: f.sha, branch: BRANCH });
+      }
+    }
+  } catch {}
+  const b64  = await toB64(file);
+  let sha; try { sha = (await gh('GET', `/repos/${REPO}/contents/${path}?ref=${BRANCH}`)).sha; } catch {}
+  const body = { message: `Admin: couverture ${col}`, content: b64, branch: BRANCH };
+  if (sha) body.sha = sha;
+  try {
+    await gh('PUT', `/repos/${REPO}/contents/${path}`, body);
+    toast('✅ Couverture mise à jour', 'ok');
+    await refreshCard(col);
+  } catch(e) { toast(`❌ ${e.message}`, 'err'); }
+}
 
 // ── Delete image ──────────────────────────────────────────────────────────────
 async function delImg(col, name, sha, btn) {
-  if (!confirm(`Supprimer "${name}" ?`)) return;
-  btn.textContent = '…';
-  try { await gh('DELETE', `/repos/${REPO}/contents/images/${col}/${name}`, { message: `Admin: suppression ${col}/${name}`, sha, branch: BRANCH }); btn.closest('.thumb').remove(); toast(`🗑 ${name}`, 'ok'); }
-  catch(e) { toast(e.message, 'err'); btn.textContent = '✕'; }
+  if (!confirm(`Supprimer « ${name} » ?`)) return;
+  const orig = btn.textContent;
+  btn.textContent = '…'; btn.disabled = true;
+  try {
+    await gh('DELETE', `/repos/${REPO}/contents/images/${col}/${encodeURIComponent(name)}`,
+      { message: `Admin: suppression ${col}/${name}`, sha, branch: BRANCH });
+    btn.closest('.thumb, [style*="position:relative"]').remove();
+    toast(`🗑 ${name}`, 'ok');
+  } catch(e) { toast(e.message, 'err'); btn.textContent = orig; btn.disabled = false; }
 }
 
 // ── Create / delete collection ────────────────────────────────────────────────
 async function createCol() {
   const input = $('new-col');
-  const name = input.value.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_-]/g,'');
+  const name  = input.value.trim().toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_-]/g,'');
   if (!name) { toast('Nom invalide', 'err'); return; }
-  try { await gh('PUT', `/repos/${REPO}/contents/images/${name}/.gitkeep`, { message: `Admin: nouvelle collection "${name}"`, content: btoa(''), branch: BRANCH }); input.value=''; toast(`📁 "${name}" créée`, 'ok'); loadCols(); }
-  catch(e) { toast(e.message, 'err'); }
+  try {
+    await gh('PUT', `/repos/${REPO}/contents/images/${name}/.gitkeep`,
+      { message: `Admin: nouvelle collection "${name}"`, content: btoa(''), branch: BRANCH });
+    input.value = '';
+    toast(`📁 "${name}" créée`, 'ok');
+    loadCols();
+  } catch(e) { toast(e.message, 'err'); }
 }
 
 async function deleteCol(col) {
-  if (!confirm(`Supprimer toute la collection "${col}" ?`)) return;
+  if (!confirm(`Supprimer toute la collection « ${col} » et toutes ses images ?`)) return;
   try {
     const items = await gh('GET', `/repos/${REPO}/contents/images/${col}?ref=${BRANCH}`);
-    for (const f of items) await gh('DELETE', `/repos/${REPO}/contents/images/${col}/${f.name}`, { message: `Admin: suppression ${col}/${f.name}`, sha: f.sha, branch: BRANCH });
-    toast(`🗑 "${col}" supprimée`, 'ok'); loadCols();
+    for (const f of items) {
+      await gh('DELETE', `/repos/${REPO}/contents/images/${col}/${f.name}`,
+        { message: `Admin: suppression ${col}/${f.name}`, sha: f.sha, branch: BRANCH });
+    }
+    toast(`🗑 "${col}" supprimée`, 'ok');
+    loadCols();
   } catch(e) { toast(e.message, 'err'); }
+}
+
+async function refreshCard(col) {
+  const old     = $('card-' + col);
+  const wasOpen = old && old.querySelector('.card-body.open');
+  const neu     = await buildCard(col);
+  if (wasOpen) {
+    neu.querySelector('.card-body').classList.add('open');
+    neu.querySelector('.card-head').classList.add('open-head');
+  }
+  if (old) old.replaceWith(neu);
 }
 
 // ── Regen ─────────────────────────────────────────────────────────────────────
 async function regen(btn) {
-  btn.disabled=true; btn.textContent='⏳ Envoi…';
-  try { await gh('POST', `/repos/${REPO}/actions/workflows/regenerate.yml/dispatches`, { ref: BRANCH }); toast('🚀 Régénération lancée !', 'ok'); }
-  catch(e) { toast(e.message, 'err'); }
-  btn.disabled=false; btn.textContent='Régénérer';
+  btn.disabled = true; btn.textContent = '⏳ Envoi…';
+  try {
+    await gh('POST', `/repos/${REPO}/actions/workflows/regenerate.yml/dispatches`, { ref: BRANCH });
+    toast('🚀 Régénération lancée (~1 min) !', 'ok');
+  } catch(e) { toast(e.message, 'err'); }
+  btn.disabled = false; btn.textContent = '▶ Régénérer';
 }
 
 // ── Toast ─────────────────────────────────────────────────────────────────────
 let _tt;
-function toast(msg, type='') { const el=$('toast'); el.textContent=msg; el.className='show '+type; clearTimeout(_tt); _tt=setTimeout(()=>el.className='',3500); }
+function toast(msg, type = '') {
+  const el = $('toast');
+  el.textContent = msg; el.className = 'show ' + type;
+  clearTimeout(_tt); _tt = setTimeout(() => el.className = '', 3500);
+}
 </script>
 </body>
 </html>

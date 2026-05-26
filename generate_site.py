@@ -6,6 +6,7 @@ Lit les images depuis images/{collection}/ et génère les HTML dans {lang}/{col
 """
 
 import os
+import json
 import shutil
 from jinja2 import Environment, FileSystemLoader
 from data import LANGUAGES, TEXTS, COLLECTIONS, CONTACT_INFO
@@ -41,12 +42,23 @@ def discover_collections():
         cpath = os.path.join(IMAGES_ROOT, slug)
         if not os.path.isdir(cpath):
             continue
-        images, cover_img = [], None
-        for fname in sorted(os.listdir(cpath)):
-            if fname.lower().endswith((".jpg", ".jpeg", ".png")):
-                images.append({"file": fname})
-                if "cover" in fname.lower():
-                    cover_img = fname
+        all_files = [f for f in os.listdir(cpath)
+                     if f.lower().endswith((".jpg", ".jpeg", ".png"))]
+        cover_img   = next((f for f in all_files if "cover" in f.lower()), None)
+        normal_files = [f for f in all_files if "cover" not in f.lower()]
+
+        # Ordre personnalisé via _order.json (créé par l'admin)
+        order_path = os.path.join(cpath, "_order.json")
+        if os.path.exists(order_path):
+            with open(order_path, encoding="utf-8") as f:
+                custom_order = json.load(f)
+            ordered   = [n for n in custom_order if n in normal_files]
+            remaining = sorted(n for n in normal_files if n not in ordered)
+            normal_files = ordered + remaining
+        else:
+            normal_files = sorted(normal_files)
+
+        images = [{"file": f} for f in normal_files]
         if not cover_img and images:
             cover_img = images[0]["file"]
         result.append({"slug": slug, "images": images, "cover_img": cover_img})
