@@ -225,7 +225,7 @@ async function startDeviceFlow() {
   $('dev-status').textContent = 'Initialisation…';
 
   try {
-    const r1 = await fetch('https://github.com/login/device/code', {
+    const r1 = await fetch('https://art-mirror-oauth.hamidchine.workers.dev/device/code', {
       method: 'POST',
       headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
       body: JSON.stringify({ client_id: CLIENT_ID, scope: 'repo' })
@@ -244,7 +244,7 @@ async function startDeviceFlow() {
     let wait = interval * 1000;
     while (Date.now() < deadline) {
       await sleep(wait);
-      const r2 = await fetch('https://github.com/login/oauth/access_token', {
+      const r2 = await fetch('https://art-mirror-oauth.hamidchine.workers.dev/access_token', {
         method: 'POST',
         headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify({ client_id: CLIENT_ID, device_code, grant_type: 'urn:ietf:params:oauth:grant-type:device_code' })
