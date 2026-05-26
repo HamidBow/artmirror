@@ -106,6 +106,6 @@ COLLECTIONS = {
 CONTACT_INFO = {
     'email': "hamidchine@proton.me",
     'instagram': "@yellow88blue",
-    'phone': "+3364347712",
-    'facebook': "fb.com/hamid.bow.7"
+    'phone': "+33643477112",
+    'facebook': "facebook.com/hamid.bow.7"
 }

@@ -17,14 +17,6 @@
             justify-content: center;
             min-height: 100vh;
         }
-        .back-link {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 1.1em;
-        }
         .contact-content {
             text-align: center;
         }
@@ -43,16 +35,30 @@
         .contact-content a:hover {
             text-decoration: underline;
         }
+
+        .back-btn {
+            position: fixed; top: 16px; left: 16px; z-index: 300;
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 16px 8px 12px;
+            background: rgba(255,255,255,0.12); color: white;
+            text-decoration: none; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.28);
+            font-size: 0.92em; font-weight: 600;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s, transform 0.15s; white-space: nowrap;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.22); transform: translateX(-3px); }
+        .back-btn::before { content: '←'; font-size: 1.05em; }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-link">Zurück zur Startseite</a>
+    <a href="index.html" class="back-btn">Zurück zur Startseite</a>
     <div class="contact-content">
         <h1>Kontaktieren Sie den Künstler</h1>
         <p>E-mail: <a href="mailto:hamidchine@proton.me">hamidchine@proton.me</a></p>
         <p>Instagram: <a href="https://www.instagram.com/yellow88blue" target="_blank">@yellow88blue</a></p>
-        <p>Téléphone: <a href="tel:+3364347712">+3364347712</a></p>
-        <p>Facebook: <a href="https://www.facebook.com/fb.com/hamid.bow.7" target="_blank">fb.com/hamid.bow.7</a></p>
+        <p>Téléphone: <a href="tel:+33643477112">+33643477112</a></p>
+        <p>Facebook: <a href="https://www.facebook.com/hamid.bow.7" target="_blank">@hamid.bow.7</a></p>
     </div>
 </body>
 </html>
