@@ -27,18 +27,15 @@
         }
         .full-image-container img {
             max-width: 100%;
-            max-height: 100%;
+            max-height: 90vh;
             object-fit: contain;
             display: block;
         }
-        /* ✅ voile par-dessus l'image */
         .anti-copy-veil {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.15); /* ✅ plus visible */
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.15);
             z-index: 10;
         }
         /* ── Back button ── */
@@ -66,7 +63,102 @@
             background: rgba(255,255,255,0.22);
             transform: translateX(-3px);
         }
-        .back-btn::before { content: ''; }
+        .back-btn::before { content: '←'; font-size: 1.05em; }
+        /* ── Language dropdown ── */
+        .lang-dropdown {
+            position: fixed;
+            top: 16px;
+            right: 16px;
+            z-index: 300;
+        }
+        .lang-dropdown-btn {
+            padding: 8px 14px;
+            background: rgba(255,255,255,0.12);
+            color: white;
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.92em;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s;
+            white-space: nowrap;
+        }
+        .lang-dropdown-btn:hover { background: rgba(255,255,255,0.22); }
+        .lang-dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: calc(100% + 6px);
+            background: rgba(0,0,40,0.97);
+            border: 1px solid rgba(255,255,255,0.18);
+            border-radius: 10px;
+            overflow: hidden;
+            min-width: 168px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.55);
+        }
+        .lang-dropdown:hover .lang-dropdown-menu { display: block; }
+        .lang-dropdown-menu a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            color: white;
+            text-decoration: none;
+            font-size: 0.93em;
+            transition: background 0.15s;
+        }
+        .lang-dropdown-menu a:hover { background: rgba(255,255,255,0.1); }
+        .lang-dropdown-menu a.lang-active {
+            background: rgba(255,255,255,0.14);
+            font-weight: 700;
+        }
+        /* ── Carousel navigation ── */
+        .carousel-arrow {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 300;
+        }
+        .carousel-arrow.prev { left: 14px; }
+        .carousel-arrow.next { right: 14px; }
+        .carousel-arrow a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 46px;
+            height: 46px;
+            background: rgba(255,255,255,0.12);
+            border: 1px solid rgba(255,255,255,0.28);
+            border-radius: 50%;
+            color: white;
+            text-decoration: none;
+            font-size: 1.3em;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s, transform 0.15s;
+        }
+        .carousel-arrow a:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.1);
+        }
+        .carousel-counter {
+            position: fixed;
+            bottom: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 300;
+            background: rgba(0,0,40,0.72);
+            color: rgba(255,255,255,0.85);
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 0.82em;
+            border: 1px solid rgba(255,255,255,0.16);
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.05em;
+        }
         /* ── Language dropdown ── */
         .lang-dropdown {
             position: fixed;
@@ -98,7 +190,7 @@
             display: none;
             position: absolute;
             right: 0;
-            top: 100%; padding-top: 6px;
+            top: calc(100% + 6px);
             background: rgba(0,0,40,0.97);
             border: 1px solid rgba(255,255,255,0.18);
             border-radius: 10px;
@@ -106,8 +198,7 @@
             min-width: 168px;
             box-shadow: 0 8px 24px rgba(0,0,0,0.55);
         }
-        .lang-dropdown:hover .lang-dropdown-menu,
-        .lang-dropdown.open .lang-dropdown-menu {
+        .lang-dropdown:hover .lang-dropdown-menu {
             display: block;
         }
         .lang-dropdown-menu a {
@@ -186,33 +277,48 @@
         </div>
     </div>
     <div class="carousel-arrow prev">
-        <a href="uk12.html" title="Précédent"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></a>
+        <a href="uk12.html" title="Précédent">&#8592;</a>
     </div>
     <div class="carousel-arrow next">
-        <a href="uk15.html" title="Suivant"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></a>
+        <a href="uk15.html" title="Suivant">&#8594;</a>
     </div>
     <div class="carousel-counter">6 / 16</div>
-    <a href="index.html" class="back-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg> Retour</a>
+    <a href="index.html" class="back-btn">Retour à la collection</a>
+    <div class="lang-dropdown">
+        <button class="lang-dropdown-btn">🇫🇷&nbsp;Français ▾</button>
+        <div class="lang-dropdown-menu">
+            
+            <a href="../../fr/ukraine/uk14.html" class="lang-active">🇫🇷&nbsp;Français</a>
+            
+            <a href="../../en/ukraine/uk14.html">🇬🇧&nbsp;English</a>
+            
+            <a href="../../de/ukraine/uk14.html">🇩🇪&nbsp;Deutsch</a>
+            
+            <a href="../../es/ukraine/uk14.html">🇪🇸&nbsp;Español</a>
+            
+            <a href="../../it/ukraine/uk14.html">🇮🇹&nbsp;Italiano</a>
+            
+            <a href="../../ja/ukraine/uk14.html">🇯🇵&nbsp;日本語</a>
+            
+        </div>
+    </div>
+
+    
+    <div class="carousel-arrow prev">
+        <a href="uk12.html" title="Précédent">&#8592;</a>
+    </div>
+    
+    
+    <div class="carousel-arrow next">
+        <a href="uk15.html" title="Suivant">&#8594;</a>
+    </div>
+    
+    <div class="carousel-counter">5 / 15</div>
 
     <div class="full-image-container">
         <img src="../../images/ukraine/uk14.jpg" alt="Ukraine">
     </div>
 
-    <div class="anti-copy-veil"></div> <!-- ✅ voile couvre toute la page -->
-    <script>
-    (function(){
-      document.querySelectorAll('.lang-dropdown').forEach(function(dd){
-        var btn = dd.querySelector('.lang-dropdown-btn');
-        btn.addEventListener('click', function(e){
-          e.stopPropagation();
-          dd.classList.toggle('open');
-        });
-      });
-      document.addEventListener('click', function(){
-        document.querySelectorAll('.lang-dropdown.open')
-          .forEach(function(dd){ dd.classList.remove('open'); });
-      });
-    })();
-    </script>
+    <div class="anti-copy-veil"></div>
 </body>
 </html>
