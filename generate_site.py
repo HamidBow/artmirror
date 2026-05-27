@@ -58,9 +58,13 @@ def discover_collections():
         else:
             normal_files = sorted(normal_files)
 
-        images = [{"file": f} for f in normal_files]
-        if not cover_img and images:
-            cover_img = images[0]["file"]
+        # La cover est incluse dans le carousel (en première position)
+        if cover_img:
+            images = [{"file": cover_img}] + [{"file": f} for f in normal_files]
+        else:
+            images = [{"file": f} for f in normal_files]
+            if images:
+                cover_img = images[0]["file"]
         result.append({"slug": slug, "images": images, "cover_img": cover_img})
     return result
 
@@ -119,7 +123,7 @@ for lang in LANGUAGES.keys():
         collections_data.append({
             "title": collection_title,
             "slug":  slug,
-            "cover": "../images/" + slug + "/" + cover_img,
+            "cover": ("../images/" + slug + "/" + cover_img) if cover_img else "",
         })
 
     # Page de contact

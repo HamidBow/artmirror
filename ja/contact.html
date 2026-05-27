@@ -6,47 +6,40 @@
     <title>アーティストに連絡する - アートミラー</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: Arial, sans-serif;
-            background-color: #000028;
-            color: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            background-color: #000028; color: white;
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
             min-height: 100vh;
         }
-        .back-link {
-            position: absolute;
-            top: 20px;
-            left: 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 1.1em;
+        /* ── Back button ── */
+        .back-btn {
+            position: fixed; top: 16px; left: 16px; z-index: 300;
+            display: inline-flex; align-items: center; gap: 7px;
+            padding: 8px 16px 8px 12px;
+            background: rgba(255,255,255,0.12); color: white;
+            text-decoration: none; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.28);
+            font-size: 0.92em; font-weight: 600;
+            backdrop-filter: blur(6px);
+            transition: background 0.2s, transform 0.15s; white-space: nowrap;
         }
-        .contact-content {
-            text-align: center;
-        }
-        .contact-content h1 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-        .contact-content p {
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-        .contact-content a {
-            color: #1da1f2; /* bleu pour liens */
-            text-decoration: none;
-        }
-        .contact-content a:hover {
-            text-decoration: underline;
-        }
+        .back-btn:hover { background: rgba(255,255,255,0.22); transform: translateX(-3px); }
+        .contact-content { text-align: center; }
+        .contact-content h1 { font-size: 2.5em; margin-bottom: 20px; }
+        .contact-content p { font-size: 1.2em; line-height: 1.6; }
+        .contact-content a { color: #1da1f2; text-decoration: none; }
+        .contact-content a:hover { text-decoration: underline; }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-link">ホームに戻る</a>
+
+    <a href="index.html" class="back-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        戻る
+    </a>
+
     <div class="contact-content">
         <h1>アーティストに連絡する</h1>
         <p>E-mail: <a href="mailto:hamidchine@proton.me">hamidchine@proton.me</a></p>
