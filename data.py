@@ -42,6 +42,14 @@ TEXTS = {
         'it': "Contatta l'artista",
         'ja': "アーティストに連絡する"
     },
+    'back_short': {
+        'fr': 'Retour',
+        'en': 'Back',
+        'de': 'Zurück',
+        'es': 'Volver',
+        'it': 'Indietro',
+        'ja': '戻る'
+    },
     'back_home': {
         'fr': "Retour à l'accueil",
         'en': "Back to home",
